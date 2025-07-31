@@ -1,35 +1,38 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ArrowUp, GraduationCap, Plus } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Upload, SendIcon } from "lucide-react";
 
 export default function MessageInput() {
   return (
-    <div className="w-full max-w-3xl mx-auto">
-      <div className="w-full bg-sidebar-accent-foreground rounded-xl p-2">
-        <div className="relative">
-          <Input
-            className="bg-transparent border-0 w-full pl-4 pr-12 py-8 text-lg placeholder:text-[#636366] text-white focus-visible:ring-0 focus-visible:ring-offset-0"
-            placeholder="Ask anything..."
+    <div className="w-full">
+      <div className="bg-[#18181c] border border-white/10 rounded-xl p-4 flex flex-col gap-2 shadow">
+        <div className="flex items-start gap-2">
+          <Textarea
+            className="flex-1 bg-transparent border-0 text-white placeholder:text-[#636366] focus-visible:ring-0 focus-visible:ring-offset-0 resize-none min-h-0"
+            placeholder="Ask me anything ..."
+            rows={1}
+            cols={1}
           />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-1/2 right-3 -translate-y-1/2 text-[#636366]"
-          >
-            <ArrowUp className="h-6 w-6" />
-          </Button>
         </div>
-        <div className="flex items-center justify-between px-2 pt-1">
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" className="text-muted-foreground">
-              <Plus className="mr-1.5 h-4 w-4" />
-              Add tools
-            </Button>
-            <Button variant="ghost" className="text-muted-foreground">
-              <GraduationCap className="mr-1.5 h-4 w-4" />
-              DeepTutor
+        <div className="w-full flex items-center justify-between">
+          <div className="flex items-center gap-4 mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 border-white/10 text-white bg-[#23232b] hover:text-white hover:bg-[#23232b]/80"
+            >
+              <Upload className="h-4 w-4" />
+              Upload Files
             </Button>
           </div>
+
+          <Button
+            size="icon"
+            variant="ghost"
+            className="text-muted-foreground"
+          >
+            <SendIcon />
+          </Button>
         </div>
       </div>
     </div>
