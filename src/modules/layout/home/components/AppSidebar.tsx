@@ -32,8 +32,8 @@ const recentLinks = [
 
 export default function AppSidebar() {
   return (
-    <Sidebar className="px-2 py-1 bg-[var(--custom-sidebar)] border-none text-white">
-      <SidebarHeader className="bg-[var(--custom-sidebar)]">
+    <Sidebar className="px-2 py-1 bg-sidebar-accent-foreground border-none text-white">
+      <SidebarHeader className="bg-sidebar-accent-foreground">
         <Image
           className="mt-2"
           src="/favicon.ico"
@@ -42,17 +42,17 @@ export default function AppSidebar() {
           height={32}
         />
       </SidebarHeader>
-      <SidebarContent className="bg-[var(--custom-sidebar)]">
+      <SidebarContent className="bg-sidebar-accent-foreground">
         <SidebarGroup className="mt-2">
-          <SidebarGroupLabel className="text-[#8E8E93]">
+          <SidebarGroupLabel className="text-secondary/90">
             Favorites
           </SidebarGroupLabel>
-          <SidebarMenu>
+          <SidebarMenu className="gap-0">
             {favoriteLinks.map((link) => (
               <SidebarMenuItem key={link.label}>
                 <SidebarMenuButton
                   asChild
-                  className="text-[#8E8E93] hover:bg-[#3A3A3C] hover:text-white"
+                  className="text-muted-foreground p-2.5 h-full"
                 >
                   <Link href={link.href}>{link.label}</Link>
                 </SidebarMenuButton>
@@ -61,15 +61,15 @@ export default function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[#8E8E93]">
+          <SidebarGroupLabel className="text-secondary/90">
             Recents
           </SidebarGroupLabel>
-          <SidebarMenu>
+          <SidebarMenu className="gap-0">
             {recentLinks.map((link) => (
               <SidebarMenuItem key={link.label}>
                 <SidebarMenuButton
                   asChild
-                  className="text-[#8E8E93] hover:bg-[#3A3A3C] hover:text-white"
+                  className="text-muted-foreground p-2.5 h-full"
                 >
                   <Link href={link.href}>{link.label}</Link>
                 </SidebarMenuButton>
@@ -78,20 +78,20 @@ export default function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="pb-2 bg-[var(--custom-sidebar)]">
+      <SidebarFooter className="pb-2 bg-sidebar-accent-foreground">
         <Button variant="ghost" className="w-full bg-[#2C2C2E]">
           Sign out
         </Button>
         <div className="flex justify-around mt-2">
           <Link
             href="/privacy"
-            className="text-xs text-[#8E8E93] hover:underline"
+            className="text-xs text-muted-foreground hover:underline"
           >
             Privacy Policy
           </Link>
           <Link
             href="/terms"
-            className="text-xs text-[#8E8E93] hover:underline"
+            className="text-xs text-muted-foreground hover:underline"
           >
             Terms of Service
           </Link>
