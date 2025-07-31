@@ -115,6 +115,11 @@
 }
 
 @layer base {
+  :root {
+    --custom-bg: #2c2c2e;
+    --custom-sidebar: #171717;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
