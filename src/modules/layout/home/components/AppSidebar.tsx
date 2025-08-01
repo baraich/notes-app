@@ -16,6 +16,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 export default function AppSidebar() {
   const trpc = useTRPC();
@@ -88,6 +90,17 @@ export default function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="bg-[#101014] pt-1 border-t border-white/10">
         <Button
+          onClick={() =>
+            authClient.signOut().then(({ error }) =>
+              error
+                ? toast.error("Failed to sign out", {
+                    id: "sidebar-signout",
+                  })
+                : typeof window !== "undefined"
+                ? (window.location.pathname = "/signin")
+                : null
+            )
+          }
           size={"sm"}
           variant="ghost"
           className="w-full bg-[#18181c] text-white mt-1 hover:bg-[#23232b] border border-white/10 hover:text-white"

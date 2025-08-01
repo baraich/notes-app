@@ -141,5 +141,8 @@ model Message {
   content         String
   toolCalls       String
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   conversation Conversations @relation(fields: [conversationsId], references: [id])
 }
