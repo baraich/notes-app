@@ -1,8 +1,13 @@
+"use client";
+import ComingSoonDialog from "@/components/coming-soon-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, SendIcon } from "lucide-react";
+import { useState } from "react";
 
 export default function MessageInput() {
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+
   return (
     <div className="w-full">
       <div className="bg-[#18181c] border border-white/10 rounded-xl p-4 flex flex-col gap-2 shadow">
@@ -19,6 +24,7 @@ export default function MessageInput() {
             <Button
               variant="outline"
               size="sm"
+              onClick={() => setUploadDialogOpen(true)}
               className="flex items-center gap-2 border-white/10 text-white bg-[#23232b] hover:text-white hover:bg-[#23232b]/80"
             >
               <Upload className="h-4 w-4" />
@@ -35,6 +41,12 @@ export default function MessageInput() {
           </Button>
         </div>
       </div>
+      <ComingSoonDialog
+        open={uploadDialogOpen}
+        setOpen={setUploadDialogOpen}
+        description="The ability to upload files will be avaiable in future
+            updates."
+      />
     </div>
   );
 }

@@ -16,6 +16,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 export default function AppSidebar() {
   const trpc = useTRPC();
@@ -52,7 +54,7 @@ export default function AppSidebar() {
                 <SidebarMenuItem key={link.id}>
                   <SidebarMenuButton
                     asChild
-                    className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white transition-colors"
+                    className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white active:bg-[#18181c] active:text-white transition-colors"
                   >
                     <Link href={`/${link.id}`}>{link.name}</Link>
                   </SidebarMenuButton>
@@ -68,7 +70,7 @@ export default function AppSidebar() {
           <SidebarMenu className="gap-0">
             {recentLinks.length === 0 && (
               <SidebarMenuItem>
-                <SidebarMenuButton className="text-white/80 p-2.5 pt-1 pl-2 h-full hover:bg-[#18181c] hover:text-white transition-colors">
+                <SidebarMenuButton className="text-white/80 p-2.5 py-1 pl-2 h-full hover:bg-[#18181c] hover:text-white active:bg-[#18181c] active:text-white transition-colors">
                   No conversation yet!
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -77,7 +79,7 @@ export default function AppSidebar() {
               <SidebarMenuItem key={link.id}>
                 <SidebarMenuButton
                   asChild
-                  className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white transition-colors"
+                  className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white active:bg-[#18181c] active:text-white transition-colors"
                 >
                   <Link href={`/${link.id}`}>{link.name}</Link>
                 </SidebarMenuButton>
@@ -88,6 +90,17 @@ export default function AppSidebar() {
       </SidebarContent>
       <SidebarFooter className="bg-[#101014] pt-1 border-t border-white/10">
         <Button
+          onClick={() =>
+            authClient.signOut().then(({ error }) =>
+              error
+                ? toast.error("Failed to sign out", {
+                    id: "sidebar-signout",
+                  })
+                : typeof window !== "undefined"
+                ? (window.location.pathname = "/signin")
+                : null
+            )
+          }
           size={"sm"}
           variant="ghost"
           className="w-full bg-[#18181c] text-white mt-1 hover:bg-[#23232b] border border-white/10 hover:text-white"
