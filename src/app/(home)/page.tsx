@@ -1,6 +1,6 @@
 "use client";
-import HomeHeader from "@/modules/home/components/HomeHeader";
-import MessageInput from "@/modules/home/components/MessageInput";
+import HomeHeader from "@/modules/home/components/home-header";
+import MessageInput from "@/modules/home/components/message-input";
 import Link from "next/link";
 
 export default function HomePage() {

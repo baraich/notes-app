@@ -54,7 +54,7 @@ export default function AppSidebar() {
                 <SidebarMenuItem key={link.id}>
                   <SidebarMenuButton
                     asChild
-                    className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white transition-colors"
+                    className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white active:bg-[#18181c] active:text-white transition-colors"
                   >
                     <Link href={`/${link.id}`}>{link.name}</Link>
                   </SidebarMenuButton>
@@ -70,7 +70,7 @@ export default function AppSidebar() {
           <SidebarMenu className="gap-0">
             {recentLinks.length === 0 && (
               <SidebarMenuItem>
-                <SidebarMenuButton className="text-white/80 p-2.5 pt-1 pl-2 h-full hover:bg-[#18181c] hover:text-white transition-colors">
+                <SidebarMenuButton className="text-white/80 p-2.5 py-1 pl-2 h-full hover:bg-[#18181c] hover:text-white active:bg-[#18181c] active:text-white transition-colors">
                   No conversation yet!
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -79,7 +79,7 @@ export default function AppSidebar() {
               <SidebarMenuItem key={link.id}>
                 <SidebarMenuButton
                   asChild
-                  className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white transition-colors"
+                  className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white active:bg-[#18181c] active:text-white transition-colors"
                 >
                   <Link href={`/${link.id}`}>{link.name}</Link>
                 </SidebarMenuButton>

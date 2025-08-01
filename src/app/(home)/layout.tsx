@@ -1,5 +1,5 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import AppSidebar from "@/modules/layout/home/components/AppSidebar";
+import AppSidebar from "@/modules/layout/home/components/app-sidebar";
 
 interface Props {
   children: React.ReactNode;
