@@ -128,4 +128,8 @@
     @apply bg-background text-foreground;
     font-family: var(--space-grotesk);
   }
+
+  button {
+    @apply cursor-pointer;
+  }
 }
