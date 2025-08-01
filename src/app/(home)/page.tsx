@@ -1,6 +1,7 @@
 "use client";
 import HomeHeader from "@/modules/home/components/HomeHeader";
 import MessageInput from "@/modules/home/components/MessageInput";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -47,9 +48,12 @@ export default function HomePage() {
       <footer className="w-full py-4 text-center text-xs text-muted-foreground border-t border-white/10 bg-[#101014]">
         Our AI-driven solution prioritizes your privacy and data
         security.{" "}
-        <a href="#" className="underline hover:text-white">
-          Privacy & Corporate AI
-        </a>
+        <Link
+          href="/privacy-and-terms"
+          className="underline hover:text-white"
+        >
+          Privacy & Terms
+        </Link>
       </footer>
     </div>
   );
