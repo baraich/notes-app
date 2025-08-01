@@ -14,23 +14,22 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-
-const favoriteLinks = [
-  { href: "#", label: "Hero section for e-commerce" },
-  { href: "#", label: "3-tier subscription pricing" },
-];
-
-const recentLinks = [
-  { href: "#", label: "Generative AI chat bio" },
-  { href: "#", label: "Color palette selector" },
-  { href: "#", label: "2 CTA buttons" },
-  { href: "#", label: "Tag sorting and selecting" },
-  { href: "#", label: "Project timeline" },
-  { href: "#", label: "Share with team modal" },
-];
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 
 export default function AppSidebar() {
+  const trpc = useTRPC();
+  const conversations = useQuery(
+    trpc.conversations.listUserConversations.queryOptions()
+  );
+
+  const favoriteLinks = (conversations.data ?? []).filter(
+    (conversation) => conversation.labels.includes("favorite")
+  );
+  const recentLinks = (conversations.data ?? []).filter(
+    (conversation) => !conversation.labels.includes("favorite")
+  );
+
   return (
     <Sidebar className="px-2 pt-1 bg-[#101014] border-r border-white/10 text-white">
       <SidebarHeader className="bg-[#101014]">
@@ -43,35 +42,44 @@ export default function AppSidebar() {
         />
       </SidebarHeader>
       <SidebarContent className="bg-[#101014]">
-        <SidebarGroup className="mt-2">
-          <SidebarGroupLabel className="text-white/70">
-            Favorites
-          </SidebarGroupLabel>
-          <SidebarMenu className="gap-0">
-            {favoriteLinks.map((link) => (
-              <SidebarMenuItem key={link.label}>
-                <SidebarMenuButton
-                  asChild
-                  className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white transition-colors"
-                >
-                  <Link href={link.href}>{link.label}</Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        {favoriteLinks.length > 0 && (
+          <SidebarGroup className="mt-2">
+            <SidebarGroupLabel className="text-white/70">
+              Favorites
+            </SidebarGroupLabel>
+            <SidebarMenu className="gap-0">
+              {favoriteLinks.map((link) => (
+                <SidebarMenuItem key={link.id}>
+                  <SidebarMenuButton
+                    asChild
+                    className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white transition-colors"
+                  >
+                    <Link href={`/${link.id}`}>{link.name}</Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
         <SidebarGroup>
           <SidebarGroupLabel className="text-white/70">
             Recents
           </SidebarGroupLabel>
           <SidebarMenu className="gap-0">
+            {recentLinks.length === 0 && (
+              <SidebarMenuItem>
+                <SidebarMenuButton className="text-white/80 p-2.5 pt-1 pl-2 h-full hover:bg-[#18181c] hover:text-white transition-colors">
+                  No conversation yet!
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
             {recentLinks.map((link) => (
-              <SidebarMenuItem key={link.label}>
+              <SidebarMenuItem key={link.id}>
                 <SidebarMenuButton
                   asChild
                   className="text-white/80 p-2.5 h-full hover:bg-[#18181c] hover:text-white transition-colors"
                 >
-                  <Link href={link.href}>{link.label}</Link>
+                  <Link href={`/${link.id}`}>{link.name}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

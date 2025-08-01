@@ -1,6 +1,7 @@
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { TRPCReactProvider } from "@/trpc/client";
 
 const fontSpaceGrotesk = Space_Grotesk({
   weight: ["400"],
@@ -14,13 +15,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${fontSpaceGrotesk.variable} antialiased w-full h-screen`}
-      >
-        <Toaster />
-        {children}
-      </body>
-    </html>
+    <TRPCReactProvider>
+      <html lang="en">
+        <body
+          className={`${fontSpaceGrotesk.variable} antialiased w-full h-screen`}
+        >
+          <Toaster />
+          {children}
+        </body>
+      </html>
+    </TRPCReactProvider>
   );
 }
