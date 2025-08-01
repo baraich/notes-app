@@ -3,9 +3,19 @@ import ComingSoonDialog from "@/components/coming-soon-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, SendIcon } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
-export default function MessageInput() {
+interface Props {
+  value: string;
+  setValue: Dispatch<SetStateAction<string>>;
+  onSubmit: (value: string) => void;
+}
+
+export default function MessageInput({
+  value,
+  setValue,
+  onSubmit,
+}: Props) {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
   return (
@@ -17,6 +27,13 @@ export default function MessageInput() {
             placeholder="Ask me anything ..."
             rows={1}
             cols={1}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.metaKey) {
+                onSubmit(value);
+              }
+            }}
           />
         </div>
         <div className="w-full flex items-center justify-between">
@@ -35,6 +52,7 @@ export default function MessageInput() {
           <Button
             size="icon"
             variant="ghost"
+            onClick={() => onSubmit(value)}
             className="text-muted-foreground"
           >
             <SendIcon />
