@@ -38,7 +38,7 @@ export default function SignIn() {
       setIsPending(true);
       toast.loading("Signin in...", { id: "signin" });
 
-      const { data, error } = await authClient.signIn.email({
+      const { error } = await authClient.signIn.email({
         email,
         password,
         callbackURL: "/",
@@ -62,7 +62,7 @@ export default function SignIn() {
       <div className="grid gap-2 text-center">
         <h1 className="text-3xl font-bold">Sign In</h1>
         <p className="text-balance text-muted-foreground">
-          Let's get you back to your brilliant ideas.
+          Let&apos;s get you back to your brilliant ideas.
         </p>
       </div>
       <Form {...form}>
