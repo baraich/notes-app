@@ -97,8 +97,8 @@ export default function ConversationListing({
 
   if (userConversation.isPending) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-[#101014]">
-        <Loader2Icon className="text-white animate-spin" />
+      <div className="w-full h-full flex items-center justify-center bg-white">
+        <Loader2Icon className="text-gray-600 animate-spin" />
       </div>
     );
   }
@@ -108,7 +108,7 @@ export default function ConversationListing({
   }
 
   return (
-    <div className="w-full h-full bg-[#101014] min-h-screen flex flex-col justify-between">
+    <div className="w-full h-full bg-background min-h-screen flex flex-col justify-between">
       <HomeHeader />
       <div className="w-full grow mx-auto p-4 space-y-6 lg:pt-8">
         {messages.map((message) =>
@@ -123,13 +123,14 @@ export default function ConversationListing({
         )}
         {response !== "" && <AssistantMessage content={response} />}
       </div>
-      <div className="p-4">
+      <div className="p-4 w-full mx-auto">
         <MessageInput
           onSubmit={(value) => handleMessage(value, setValue)}
           value={value}
           setValue={setValue}
         />
       </div>
+      <Footer />
     </div>
   );
 }
@@ -140,18 +141,12 @@ interface UserMessageProps {
 
 function UserMessage({ content }: UserMessageProps) {
   return (
-    <div className="flex justify-end">
-      <div className="flex items-start gap-3 max-w-[80%]">
-        <div className="flex flex-col items-end">
-          <div className="bg-blue-600 text-white px-4 py-3 rounded-2xl rounded-br-md shadow-lg">
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">
-              {content}
-            </p>
-          </div>
-        </div>
-        <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-          <User className="w-4 h-4 text-white" />
-        </div>
+    <div className="flex items-start gap-3 justify-end">
+      <div className="bg-primary text-primary-foreground p-3 rounded-2xl rounded-br-none max-w-[80%]">
+        <p className="text-sm whitespace-pre-wrap">{content}</p>
+      </div>
+      <div className="size-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+        <User className="size-4 text-muted-foreground" />
       </div>
     </div>
   );
@@ -163,18 +158,14 @@ interface AssistantMessageProps {
 
 function AssistantMessage({ content }: AssistantMessageProps) {
   return (
-    <div className="flex justify-start">
-      <div className="flex items-start gap-3 max-w-[80%]">
-        <div className="flex-shrink-0 w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-          <Bot className="w-4 h-4 text-white" />
-        </div>
-        <div className="flex flex-col">
-          <div className="bg-[#1a1a1e] border border-gray-700 text-white px-4 py-3 rounded-2xl rounded-bl-md shadow-lg">
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">
-              {content}
-            </p>
-          </div>
-        </div>
+    <div className="flex items-start gap-3">
+      <div className="size-8 rounded-full bg-muted flex items-center justify-center shrink-0">
+        <Bot className="size-4 text-muted-foreground" />
+      </div>
+      <div className="bg-muted p-3 rounded-2xl rounded-bl-none max-w-[80%]">
+        <p className="text-sm whitespace-pre-wrap text-foreground">
+          {content}
+        </p>
       </div>
     </div>
   );
@@ -190,34 +181,27 @@ interface NoMessagesProps {
 export function NoMessages({ handleMessage }: NoMessagesProps) {
   const [value, setValue] = useState("");
   return (
-    <div className="min-h-screen bg-[#101014] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <HomeHeader />
       <main className="flex-1 flex flex-col items-center justify-center px-4">
         <div className="flex flex-col items-center w-full max-w-2xl">
           <div className="mb-8 flex flex-col items-center">
             <div className="mb-4">
-              {/* Logo or icon */}
-              <div className="rounded-full bg-[#23232b] p-3 flex items-center justify-center">
-                <svg
-                  width="32"
-                  height="32"
-                  viewBox="0 0 32 32"
-                  fill="none"
-                >
-                  <circle cx="16" cy="16" r="16" fill="#3b82f6" />
-                  <circle cx="16" cy="16" r="6" fill="#fff" />
-                </svg>
+              <div className="rounded-full bg-primary/10 text-primary p-3 flex items-center justify-center">
+                <Bot className="size-8" />
               </div>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center">
               What can I help you with today?
             </h1>
           </div>
-          <MessageInput
-            value={value}
-            setValue={setValue}
-            onSubmit={(value) => handleMessage(value, setValue)}
-          />
+          <div className="w-full">
+            <MessageInput
+              value={value}
+              setValue={setValue}
+              onSubmit={(value) => handleMessage(value, setValue)}
+            />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 w-full">
             <SuggestionCard
               title="Thinking in English"
@@ -234,17 +218,23 @@ export function NoMessages({ handleMessage }: NoMessagesProps) {
           </div>
         </div>
       </main>
-      <footer className="w-full py-4 text-center text-xs text-muted-foreground border-t border-white/10 bg-[#101014]">
-        Our AI-driven solution prioritizes your privacy and data
-        security.{" "}
-        <Link
-          href="/privacy-and-terms"
-          className="underline hover:text-white"
-        >
-          Privacy & Terms
-        </Link>
-      </footer>
+      <Footer />
     </div>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="w-full py-4 text-center text-xs text-muted-foreground border-t bg-background">
+      Our AI-driven solution prioritizes your privacy and data
+      security.{" "}
+      <Link
+        href="/privacy-and-terms"
+        className="underline hover:text-foreground"
+      >
+        Privacy & Terms
+      </Link>
+    </footer>
   );
 }
 
@@ -256,9 +246,9 @@ function SuggestionCard({
   description: string;
 }) {
   return (
-    <div className="bg-[#18181c] border border-white/10 rounded-lg p-4 flex flex-col gap-2 shadow hover:bg-[#23232b] transition-colors cursor-pointer">
-      <h3 className="font-semibold text-white">{title}</h3>
-      <p className="text-sm text-muted-foreground">{description}</p>
+    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-2 shadow hover:bg-gray-100 transition-colors cursor-pointer">
+      <h3 className="font-semibold text-gray-900">{title}</h3>
+      <p className="text-sm text-gray-600">{description}</p>
     </div>
   );
 }
