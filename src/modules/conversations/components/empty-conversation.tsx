@@ -24,8 +24,8 @@ export default function EmptyConversations({
               How can I help you today?
             </h1>
             <p className="mt-3 text-lg text-muted-foreground">
-              Start the conversation and I'll do my best to assist
-              you.
+              Start the conversation and I&apos;ll do my best to
+              assist you.
             </p>
           </div>
 

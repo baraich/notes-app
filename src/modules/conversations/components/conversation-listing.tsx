@@ -9,13 +9,7 @@ import {
 } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import MessageInput from "@/modules/home/components/message-input";
-import {
-  Loader2Icon,
-  User,
-  MapPin,
-  Send,
-  SparklesIcon,
-} from "lucide-react";
+import { SparklesIcon } from "lucide-react";
 import UserMessage from "@/modules/messages/components/user-message";
 import AssistantMessage from "@/modules/messages/components/assistant-message";
 import EmptyConversations from "./empty-conversation";
@@ -37,44 +31,76 @@ export default function ConversationListing({
   );
 
   const [value, setValue] = useState("");
-  const [response, setResponse] = useState("");
   const [messages, setMessages] = useState<
     {
       id: string;
       role: "user" | "assistant";
       content: string;
       timestamp?: Date;
+      toolCalls?: { toolName: string; output: unknown }[];
     }[]
   >([]);
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
 
-
   const createMessage = useMutation(
     trpc.stream.messages.completion.mutationOptions({
-      onMutate() {
-        setResponse("");
-      },
-      onSettled() {
-        setMessages((messages) => [
-          ...messages,
+      onMutate: ({ query }) => {
+        setMessages((prev) => [
+          ...prev,
           {
             id: crypto.randomUUID(),
-            role: "assistant",
-            content: response,
+            role: "user",
+            content: query,
             timestamp: new Date(),
           },
+          {
+            id: "streaming-assistant-response",
+            role: "assistant",
+            content: "",
+            timestamp: new Date(),
+            toolCalls: [],
+          },
         ]);
-        setResponse("");
-        queryClient.invalidateQueries(
-          trpc.conversations.listConversationWithMessages.queryOptions(
-            { id: conversationId }
+      },
+      onSuccess: async (data) => {
+        for await (const chunk of data) {
+          if (typeof chunk === "string") {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === "streaming-assistant-response"
+                  ? { ...m, content: m.content + chunk }
+                  : m
+              )
+            );
+          } else if (typeof chunk === "object") {
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === "streaming-assistant-response"
+                  ? {
+                      ...m,
+                      toolCalls: [...(m.toolCalls || []), chunk],
+                    }
+                  : m
+              )
+            );
+          }
+        }
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === "streaming-assistant-response"
+              ? { ...m, id: crypto.randomUUID() }
+              : m
           )
         );
       },
-      async onSuccess(data) {
-        for await (const chunk of data) {
-          setResponse((acc) => acc + chunk);
-        }
+      onSettled: () => {
+        queryClient.invalidateQueries(
+          trpc.conversations.listConversationWithMessages.queryOptions(
+            {
+              id: conversationId,
+            }
+          )
+        );
       },
       throwOnError: false,
     })
@@ -91,6 +117,9 @@ export default function ConversationListing({
           timestamp: dbMessage.createdAt
             ? new Date(dbMessage.createdAt)
             : new Date(),
+          toolCalls: dbMessage.toolCalls
+            ? JSON.parse(dbMessage.toolCalls)
+            : [],
         }))
       );
     },
@@ -101,15 +130,6 @@ export default function ConversationListing({
     val: string,
     setChildVal: Dispatch<SetStateAction<string>>
   ) => {
-    setMessages((messages) => [
-      ...messages,
-      {
-        id: crypto.randomUUID(),
-        role: "user",
-        content: val,
-        timestamp: new Date(),
-      },
-    ]);
     createMessage.mutate({ query: val, conversationId });
     setChildVal("");
   };
@@ -169,32 +189,31 @@ export default function ConversationListing({
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
         <div className="max-w-4xl mx-auto space-y-6">
-          {messages.map((message, index) => (
-            <div
-              key={message.id}
-              className="animate-in fade-in duration-300"
-            >
-              {message.role === "user" ? (
-                <UserMessage
-                  content={message.content}
-                  timestamp={message.timestamp}
-                />
-              ) : (
-                <AssistantMessage
-                  content={message.content}
-                  timestamp={message.timestamp}
-                />
-              )}
-            </div>
-          ))}
-          {response !== "" && (
-            <div className="animate-in fade-in duration-300">
-              <AssistantMessage
-                content={response}
-                timestamp={new Date()}
-              />
-            </div>
-          )}
+          {messages
+            .filter(
+              (message) =>
+                !!message.content ||
+                (message.toolCalls && message.toolCalls.length > 0)
+            )
+            .map((message) => (
+              <div
+                key={message.id}
+                className="animate-in fade-in duration-300"
+              >
+                {message.role === "user" ? (
+                  <UserMessage
+                    content={message.content}
+                    timestamp={message.timestamp}
+                  />
+                ) : (
+                  <AssistantMessage
+                    content={message.content}
+                    timestamp={message.timestamp}
+                    toolCalls={message.toolCalls}
+                  />
+                )}
+              </div>
+            ))}
         </div>
       </div>
 

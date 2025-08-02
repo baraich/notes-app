@@ -2,7 +2,6 @@ import superjson from "superjson";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { cache } from "react";
 import { auth } from "@/lib/auth";
-import { cookies } from "next/headers";
 
 export const createTRPCContext = cache(async (headers: Headers) => {
   return {

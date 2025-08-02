@@ -1,17 +1,18 @@
 import { ClockIcon } from "lucide-react";
 import Image from "next/image";
+import MapDisplay from "./map-display";
 
 interface AssistantMessageProps {
   content: string;
   timestamp?: Date;
+  toolCalls?: { toolName: string; output: unknown }[];
 }
 
 export default function AssistantMessage({
   content,
   timestamp,
+  toolCalls,
 }: AssistantMessageProps) {
-  const isMapContent = false;
-
   return (
     <div className="flex justify-start">
       <div className="flex items-start gap-3 max-w-[85%]">
@@ -25,13 +26,23 @@ export default function AssistantMessage({
         </div>
         <div className="flex flex-col gap-2">
           <div className="bg-white border border-gray-200 text-gray-900 px-4 py-3 rounded-2xl rounded-bl-md shadow-lg max-w-full">
-            {isMapContent ? null : (
-              // <MapDisplay content={content} />
-              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-                {content}
-              </p>
-            )}
+            <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+              {content}
+            </p>
           </div>
+          {toolCalls?.map((tool, idx) =>
+            tool.toolName == "map" ? (
+              <MapDisplay
+                key={idx}
+                location={
+                  tool.output as {
+                    latitude: number;
+                    longitude: number;
+                  }
+                }
+              />
+            ) : null
+          )}
           {timestamp && (
             <div className="flex items-center gap-1 text-xs text-gray-400">
               <ClockIcon className="w-3 h-3" />
