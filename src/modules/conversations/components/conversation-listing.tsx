@@ -1,9 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import HomeHeader from "@/modules/home/components/home-header";
-import Link from "next/link";
 import { useTRPC } from "@/trpc/client";
 import {
   useMutation,
@@ -12,7 +9,17 @@ import {
 } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import MessageInput from "@/modules/home/components/message-input";
-import { Loader2Icon, User, Bot } from "lucide-react";
+import {
+  Loader2Icon,
+  User,
+  MapPin,
+  Send,
+  SparklesIcon,
+} from "lucide-react";
+import UserMessage from "@/modules/messages/components/user-message";
+import AssistantMessage from "@/modules/messages/components/assistant-message";
+import EmptyConversations from "./empty-conversation";
+import ComingSoonDialog from "@/components/coming-soon-dialog";
 
 interface Props {
   conversationId: string;
@@ -36,8 +43,11 @@ export default function ConversationListing({
       id: string;
       role: "user" | "assistant";
       content: string;
+      timestamp?: Date;
     }[]
   >([]);
+  const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
+
 
   const createMessage = useMutation(
     trpc.stream.messages.completion.mutationOptions({
@@ -51,6 +61,7 @@ export default function ConversationListing({
             id: crypto.randomUUID(),
             role: "assistant",
             content: response,
+            timestamp: new Date(),
           },
         ]);
         setResponse("");
@@ -77,6 +88,9 @@ export default function ConversationListing({
           id: dbMessage.id,
           role: dbMessage.role.toLowerCase() as "user" | "assistant",
           content: dbMessage.content,
+          timestamp: dbMessage.createdAt
+            ? new Date(dbMessage.createdAt)
+            : new Date(),
         }))
       );
     },
@@ -89,7 +103,12 @@ export default function ConversationListing({
   ) => {
     setMessages((messages) => [
       ...messages,
-      { id: crypto.randomUUID(), role: "user", content: val },
+      {
+        id: crypto.randomUUID(),
+        role: "user",
+        content: val,
+        timestamp: new Date(),
+      },
     ]);
     createMessage.mutate({ query: val, conversationId });
     setChildVal("");
@@ -98,157 +117,102 @@ export default function ConversationListing({
   if (userConversation.isPending) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-white">
-        <Loader2Icon className="text-gray-600 animate-spin" />
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-600 text-sm">
+            Loading conversation...
+          </p>
+        </div>
       </div>
     );
   }
 
   if (!(messages.length > 0)) {
-    return <NoMessages handleMessage={handleMessage} />;
+    return <EmptyConversations handleMessage={handleMessage} />;
   }
 
   return (
-    <div className="w-full h-full bg-background min-h-screen flex flex-col justify-between">
-      <HomeHeader />
-      <div className="w-full grow mx-auto p-4 space-y-6 lg:pt-8">
-        {messages.map((message) =>
-          message.role === "user" ? (
-            <UserMessage key={message.id} content={message.content} />
-          ) : (
-            <AssistantMessage
-              key={message.id}
-              content={message.content}
-            />
-          )
-        )}
-        {response !== "" && <AssistantMessage content={response} />}
-      </div>
-      <div className="p-4 w-full mx-auto">
-        <MessageInput
-          onSubmit={(value) => handleMessage(value, setValue)}
-          value={value}
-          setValue={setValue}
-        />
-      </div>
-      <Footer />
-    </div>
-  );
-}
-
-interface UserMessageProps {
-  content: string;
-}
-
-function UserMessage({ content }: UserMessageProps) {
-  return (
-    <div className="flex items-start gap-3 justify-end">
-      <div className="bg-primary text-primary-foreground p-3 rounded-2xl rounded-br-none max-w-[80%]">
-        <p className="text-sm whitespace-pre-wrap">{content}</p>
-      </div>
-      <div className="size-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-        <User className="size-4 text-muted-foreground" />
-      </div>
-    </div>
-  );
-}
-
-interface AssistantMessageProps {
-  content: string;
-}
-
-function AssistantMessage({ content }: AssistantMessageProps) {
-  return (
-    <div className="flex items-start gap-3">
-      <div className="size-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-        <Bot className="size-4 text-muted-foreground" />
-      </div>
-      <div className="bg-muted p-3 rounded-2xl rounded-bl-none max-w-[80%]">
-        <p className="text-sm whitespace-pre-wrap text-foreground">
-          {content}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-interface NoMessagesProps {
-  handleMessage: (
-    value: string,
-    setValue: Dispatch<SetStateAction<string>>
-  ) => void;
-}
-
-export function NoMessages({ handleMessage }: NoMessagesProps) {
-  const [value, setValue] = useState("");
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <HomeHeader />
-      <main className="flex-1 flex flex-col items-center justify-center px-4">
-        <div className="flex flex-col items-center w-full max-w-2xl">
-          <div className="mb-8 flex flex-col items-center">
-            <div className="mb-4">
-              <div className="rounded-full bg-primary/10 text-primary p-3 flex items-center justify-center">
-                <Bot className="size-8" />
-              </div>
+    <div className="w-full h-full bg-gradient-to-br from-gray-50 to-white flex flex-col">
+      {/* Modern Header */}
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div>
+              <h1 className="font-semibold text-gray-900">
+                {userConversation.data?.name || "Conversation"}
+              </h1>
+              <p className="text-xs text-gray-500">
+                Created at{" "}
+                {userConversation.data?.createdAt
+                  ? new Date(
+                      userConversation.data.createdAt
+                    ).toLocaleDateString()
+                  : "..."}
+              </p>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center">
-              What can I help you with today?
-            </h1>
           </div>
-          <div className="w-full">
-            <MessageInput
-              value={value}
-              setValue={setValue}
-              onSubmit={(value) => handleMessage(value, setValue)}
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 w-full">
-            <SuggestionCard
-              title="Thinking in English"
-              description="Get into the habit of thinking directly in English."
-            />
-            <SuggestionCard
-              title="Talking to Yourself"
-              description="Train your speaking skills by talking to yourself."
-            />
-            <SuggestionCard
-              title="Use the AI Application"
-              description="To practise pronunciation, listen to conversation simulations."
-            />
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setUpgradeDialogOpen(true)}
+              size="sm"
+              className="bg-gray-100 text-primary border hover:bg-gray-200 hover:border-gray-300 flex items-center gap-2"
+            >
+              <span>Upgrade</span>
+              <SparklesIcon className="w-4 h-4" />
+            </Button>
           </div>
         </div>
-      </main>
-      <Footer />
-    </div>
-  );
-}
+      </div>
 
-function Footer() {
-  return (
-    <footer className="w-full py-4 text-center text-xs text-muted-foreground border-t bg-background">
-      Our AI-driven solution prioritizes your privacy and data
-      security.{" "}
-      <Link
-        href="/privacy-and-terms"
-        className="underline hover:text-foreground"
-      >
-        Privacy & Terms
-      </Link>
-    </footer>
-  );
-}
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {messages.map((message, index) => (
+            <div
+              key={message.id}
+              className="animate-in fade-in duration-300"
+            >
+              {message.role === "user" ? (
+                <UserMessage
+                  content={message.content}
+                  timestamp={message.timestamp}
+                />
+              ) : (
+                <AssistantMessage
+                  content={message.content}
+                  timestamp={message.timestamp}
+                />
+              )}
+            </div>
+          ))}
+          {response !== "" && (
+            <div className="animate-in fade-in duration-300">
+              <AssistantMessage
+                content={response}
+                timestamp={new Date()}
+              />
+            </div>
+          )}
+        </div>
+      </div>
 
-function SuggestionCard({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col gap-2 shadow hover:bg-gray-100 transition-colors cursor-pointer">
-      <h3 className="font-semibold text-gray-900">{title}</h3>
-      <p className="text-sm text-gray-600">{description}</p>
+      {/* Message Input */}
+      <div className="sticky bottom-0 bg-white/80 backdrop-blur-md border-t border-gray-200 px-6 py-4">
+        <div className="max-w-4xl mx-auto">
+          <MessageInput
+            onSubmit={(value) => handleMessage(value, setValue)}
+            value={value}
+            setValue={setValue}
+          />
+        </div>
+      </div>
+      <ComingSoonDialog
+        open={upgradeDialogOpen}
+        setOpen={setUpgradeDialogOpen}
+        description="The ability to upgrade to premium plan for higher usage limits would be shipped in future updates."
+      />
     </div>
   );
 }

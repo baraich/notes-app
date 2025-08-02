@@ -5,7 +5,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { SidebarIcon, SparklesIcon } from "lucide-react";
 import { useState } from "react";
 
-export default function HomeHeader() {
+export default function Topbar() {
   const { open, setOpen } = useSidebar();
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
 
