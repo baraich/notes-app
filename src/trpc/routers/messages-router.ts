@@ -7,7 +7,16 @@ import { prismaClient } from "@/lib/prisma-client";
 export const messagesRouter = createTRPCRouter({
   completion: protectedProcedure
     .input(
-      z.object({ query: z.string(), conversationId: z.string() })
+      z.object({
+        query: z.string(),
+        conversationId: z.string(),
+        messages: z.array(
+          z.object({
+            id: z.string(),
+            content: z.string(),
+          })
+        ),
+      })
     )
     .mutation(async function* ({ input }) {
       const response = streamText({

@@ -130,7 +130,7 @@ export default function ConversationListing({
     val: string,
     setChildVal: Dispatch<SetStateAction<string>>
   ) => {
-    createMessage.mutate({ query: val, conversationId });
+    createMessage.mutate({ query: val, conversationId, messages });
     setChildVal("");
   };
 
