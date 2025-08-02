@@ -5,17 +5,17 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { SidebarIcon, SparklesIcon } from "lucide-react";
 import { useState } from "react";
 
-export default function HomeHeader() {
+export default function Topbar() {
   const { open, setOpen } = useSidebar();
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
 
   return (
-    <header className="w-full flex items-center justify-between px-4 py-3 border-b border-white/10">
+    <header className="w-full flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white">
       <div className="flex items-center gap-2">
         <Button
           size="icon"
           variant="ghost"
-          className="text-muted-foreground"
+          className="text-gray-600 hover:text-gray-900"
           onClick={() => setOpen(!open)}
         >
           <SidebarIcon className="h-5 w-5" />
@@ -25,7 +25,7 @@ export default function HomeHeader() {
         <Button
           onClick={() => setUpgradeDialogOpen(true)}
           size="sm"
-          className="bg-[#23232b] text-blue-400 border border-blue-400 hover:bg-blue-500/20"
+          className="bg-gray-100 text-primary border hover:bg-gray-200 hover:border-gray-300"
         >
           <span>Upgrade</span>
           <SparklesIcon />

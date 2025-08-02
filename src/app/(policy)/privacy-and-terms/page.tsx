@@ -24,10 +24,11 @@ const PrivacyAndTermsPage = () => {
         </p>
 
         <p className="mb-6">
-          Welcome to our notes application ("Service"). We are
-          committed to protecting the privacy of our users, especially
-          students. This Privacy Policy explains what information we
-          collect, how we use it, and your rights in relation to it.
+          Welcome to our notes application (&quot;Service&quot;). We
+          are committed to protecting the privacy of our users,
+          especially students. This Privacy Policy explains what
+          information we collect, how we use it, and your rights in
+          relation to it.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">
@@ -42,12 +43,12 @@ const PrivacyAndTermsPage = () => {
           <li>
             <strong>User-Generated Content:</strong> We collect and
             store the notes, text, images, and any other content you
-            create or upload ("Notes").
+            create or upload (&quot;Notes&quot;).
           </li>
           <li>
             <strong>AI Chat and Prompts:</strong> We collect the
             prompts, questions, and conversation history you submit to
-            our AI-powered chat feature ("AI Prompts").
+            our AI-powered chat feature (&quot;AI Prompts&quot;).
           </li>
           <li>
             <strong>Usage and Technical Data:</strong> We
@@ -91,10 +92,10 @@ const PrivacyAndTermsPage = () => {
         <ul className="list-disc list-inside space-y-2 mb-6">
           <li>
             <strong>OpenAI, L.L.C.:</strong> To power our AI chat
-            feature, we send your AI Prompts to OpenAI's API. In
-            accordance with OpenAI's API data usage policies, they do
-            not use data submitted via their API to train their
-            models. We do not share your account information or
+            feature, we send your AI Prompts to OpenAI&apos;s API. In
+            accordance with OpenAI&apos;s API data usage policies,
+            they do not use data submitted via their API to train
+            their models. We do not share your account information or
             personal identifiers with OpenAI.
           </li>
           <li>
@@ -164,8 +165,8 @@ const PrivacyAndTermsPage = () => {
           <li>
             Using the Service to represent AI-generated content as
             your own original work in an academic setting is a
-            violation of these terms and your university's academic
-            integrity policy.
+            violation of these terms and your university&apos;s
+            academic integrity policy.
           </li>
         </ul>
 
@@ -210,9 +211,9 @@ const PrivacyAndTermsPage = () => {
           6. Disclaimer of Warranties
         </h2>
         <p className="mb-6">
-          The Service is provided "as-is" without any warranties of
-          any kind. We do not guarantee that the service will be
-          uninterrupted or error-free.
+          The Service is provided &quot;as-is&quot; without any
+          warranties of any kind. We do not guarantee that the service
+          will be uninterrupted or error-free.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">

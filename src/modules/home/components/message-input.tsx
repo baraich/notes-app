@@ -3,20 +3,37 @@ import ComingSoonDialog from "@/components/coming-soon-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, SendIcon } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
-export default function MessageInput() {
+interface Props {
+  value: string;
+  setValue: Dispatch<SetStateAction<string>>;
+  onSubmit: (value: string) => void;
+}
+
+export default function MessageInput({
+  value,
+  setValue,
+  onSubmit,
+}: Props) {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
   return (
     <div className="w-full">
-      <div className="bg-[#18181c] border border-white/10 rounded-xl p-4 flex flex-col gap-2 shadow">
-        <div className="flex items-start gap-2">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col shadow-sm">
+        <div>
           <Textarea
-            className="flex-1 bg-transparent border-0 text-white placeholder:text-[#636366] focus-visible:ring-0 focus-visible:ring-offset-0 resize-none min-h-0"
-            placeholder="Ask me anything ..."
+            className="flex-1 bg-transparent border-0 text-gray-900 placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none min-h-0 shadow-none"
+            placeholder="Ask me anything..."
             rows={1}
             cols={1}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.metaKey) {
+                onSubmit(value);
+              }
+            }}
           />
         </div>
         <div className="w-full flex items-center justify-between">
@@ -25,7 +42,7 @@ export default function MessageInput() {
               variant="outline"
               size="sm"
               onClick={() => setUploadDialogOpen(true)}
-              className="flex items-center gap-2 border-white/10 text-white bg-[#23232b] hover:text-white hover:bg-[#23232b]/80"
+              className="flex items-center gap-2"
             >
               <Upload className="h-4 w-4" />
               Upload Files
@@ -34,8 +51,8 @@ export default function MessageInput() {
 
           <Button
             size="icon"
-            variant="ghost"
-            className="text-muted-foreground"
+            onClick={() => onSubmit(value)}
+            className="text-white bg-primary"
           >
             <SendIcon />
           </Button>

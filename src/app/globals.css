@@ -132,4 +132,8 @@
   button {
     @apply cursor-pointer;
   }
+
+  .maplibregl-ctrl-attrib-button {
+    @apply hidden;
+  }
 }

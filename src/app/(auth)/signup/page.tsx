@@ -40,7 +40,7 @@ export default function SignUp() {
       setIsPending(true);
       toast.loading("Creating account...", { id: "signup" });
 
-      const { data, error } = await authClient.signUp.email({
+      const { error } = await authClient.signUp.email({
         name,
         email,
         password,
