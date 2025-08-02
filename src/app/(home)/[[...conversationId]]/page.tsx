@@ -41,7 +41,7 @@ export default function ConversationPage({ params }: Props) {
     createConversation.mutate();
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <Loader2Icon className="text-white animate-spin" />
+        <Loader2Icon className="text-gray-600 animate-spin" />
       </div>
     );
   }
@@ -55,7 +55,7 @@ export default function ConversationPage({ params }: Props) {
   }
 
   return (
-    <div className="w-full h-full bg-[#101014]">
+    <div className="w-full h-full bg-white">
       <ConversationListing conversationId={conversationId[0]} />
     </div>
   );

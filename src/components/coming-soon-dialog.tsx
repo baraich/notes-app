@@ -23,12 +23,12 @@ export default function ComingSoonDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogOverlay className="bg-black/50" />
-      <DialogContent className="bg-[#18181c] border border-white/10 text-white">
+      <DialogContent className="bg-white border border-gray-200 text-gray-900">
         <DialogHeader>
-          <DialogTitle className="text-white">
+          <DialogTitle className="text-gray-900">
             Coming soon!!!
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription className="text-gray-600">
             {description}
           </DialogDescription>
         </DialogHeader>
