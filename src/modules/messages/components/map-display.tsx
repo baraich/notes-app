@@ -5,26 +5,23 @@ import {
 } from "@/components/ui/alert";
 import { Map, Marker, Popup } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
+import {
+  MapToolInput,
+  MapToolOutput,
+} from "@/modules/tools/interface";
 
 interface MapDisplayProps {
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-  locationName: string;
+  input: MapToolInput;
+  output: MapToolOutput;
 }
 
-export default function MapDisplay({
-  location,
-  locationName,
-}: MapDisplayProps) {
-  const popup = useMemo(() => {
-    return new maplibregl.Popup().setText(locationName);
-  }, []);
+export default function MapDisplay({ output }: MapDisplayProps) {
+  const mapRef = useRef<maplibregl.Map | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
-  if (!location.latitude || !location.longitude) {
+  if (output.points.length === 0) {
     return (
       <Alert variant={"destructive"}>
         <AlertTitle>Something went wrong!</AlertTitle>
@@ -35,26 +32,61 @@ export default function MapDisplay({
       </Alert>
     );
   }
+
+  const center =
+    output.points.find((p) => p.is_main) || output.points[0];
+
+  const fitBounds = () => {
+    if (!mapRef.current || output.points.length < 2) return;
+
+    const bounds = new maplibregl.LngLatBounds();
+    output.points.forEach((point) =>
+      bounds.extend([point.lng, point.lat])
+    );
+
+    mapRef.current.fitBounds(bounds, {
+      padding: 40,
+      maxZoom: 15,
+      duration: 1000,
+    });
+  };
+
+  useEffect(() => {
+    if (!mapLoaded) return;
+    fitBounds();
+  }, [mapRef.current, output.points, mapLoaded]);
+
   return (
     <div className="w-full h-64 bg-zinc-800 rounded-lg flex items-center justify-center relative overflow-hidden border border-zinc-800">
       <Map
+        reuseMaps
+        onLoad={() => {
+          setMapLoaded(true);
+        }}
+        ref={(instance) => {
+          mapRef.current = instance?.getMap?.() ?? null;
+        }}
         initialViewState={{
-          latitude: location.latitude,
-          longitude: location.longitude,
+          latitude: center.lat,
+          longitude: center.lng,
           zoom: 13,
         }}
         maplibreLogo={true}
         attributionControl={false}
         logoPosition={"bottom-right"}
         mapStyle="https://tiles.openfreemap.org/styles/dark"
-        style={{ position: "relative", height: "100%" }}
       >
-        <Marker
-          latitude={location.latitude}
-          longitude={location.longitude}
-          anchor="center"
-          popup={popup}
-        ></Marker>
+        {output.points
+          .sort((x, y) => Number(y.is_main) - Number(x.is_main))
+          .map((point, idx) => (
+            <Marker
+              key={idx}
+              latitude={point.lat}
+              longitude={point.lng}
+              anchor="center"
+              popup={new maplibregl.Popup().setText(point.location)}
+            ></Marker>
+          ))}
       </Map>
     </div>
   );

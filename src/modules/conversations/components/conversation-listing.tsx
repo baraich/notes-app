@@ -20,6 +20,7 @@ import UserMessage from "@/modules/messages/components/user-message";
 import AssistantMessage from "@/modules/messages/components/assistant-message";
 import EmptyConversations from "./empty-conversation";
 import ComingSoonDialog from "@/components/coming-soon-dialog";
+import { ToolCall } from "@/modules/tools/interface";
 
 interface Props {
   conversationId: string;
@@ -43,11 +44,8 @@ export default function ConversationListing({
       role: "user" | "assistant";
       content: string;
       timestamp?: Date;
-      toolCalls?: {
-        toolName: string;
-        output: unknown;
-        input: unknown;
-      }[];
+      // eslint-disable-next-line
+      toolCalls?: ToolCall<any>[];
     }[]
   >([]);
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
@@ -212,7 +210,7 @@ export default function ConversationListing({
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6 max-w-screen">
         <div className="max-w-4xl mx-auto space-y-6">
           {messages
             .filter(

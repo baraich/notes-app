@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -142,6 +143,9 @@
     font-family: var(--space-grotesk) !important;
   }
   .maplibregl-popup-close-button {
-    @apply px-2!  py-1;
+    @apply px-2! py-1!;
+  }
+  .maplibregl-map {
+    @apply min-h-64! h-64! max-h-64!;
   }
 }
