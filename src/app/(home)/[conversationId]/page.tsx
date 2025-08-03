@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { notFound, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { use } from "react";
 import ConversationListing from "@/modules/conversations/components/conversation-listing";
 import { Loader2Icon } from "lucide-react";
