@@ -9,9 +9,12 @@ export const env = createEnv({
     OPENAI_API_KEY: z.string().min(1),
   },
   client: {
+    // NEXT_PUBLIC_HEIGHT_API_KEY: z.string().min(1),
     NEXT_PUBLIC_BASE_URL: z.string().min(1),
   },
   experimental__runtimeEnv: {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+    // NEXT_PUBLIC_HEIGHT_API_KEY:
+    //   process.env.NEXT_PUBLIC_HEIGHT_API_KEY!,
   },
 });

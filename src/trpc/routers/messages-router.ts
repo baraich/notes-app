@@ -3,6 +3,21 @@ import { openai } from "@ai-sdk/openai";
 import { createTRPCRouter, protectedProcedure } from "../init";
 import z from "zod";
 import { prismaClient } from "@/lib/prisma-client";
+import {
+  MapToolInput,
+  MapToolOutput,
+  ToolCall,
+  ToolInput,
+  ToolOutput,
+  ValidTool,
+  validTools,
+} from "@/modules/tools/interface";
+
+function fetchLocationCoords(location: string) {
+  return fetch(
+    `https://www.gps-coordinates.net/geoproxy?q=${location}&key=9416bf2c8b1d4751be6a9a9e94ea85ca&no_annotations=1&language=en`
+  );
+}
 
 export const messagesRouter = createTRPCRouter({
   completion: protectedProcedure
@@ -23,7 +38,7 @@ export const messagesRouter = createTRPCRouter({
       const response = streamText({
         model: openai("o4-mini"),
         system:
-          "You are Flue, a research assistant meant to help college or univeristy students with their research by provided them real-world facts regarding their questions. Moreover, you are not a simple assistant, you are equipped with special powers such as, you can display a map to the user if they are asking something related to a location or landmark using the 'map' tool.\n\nThe 'map' tool allows you to display a map for a particluar landmark, you can only display a map centered at the landmark for now, but in future you will be able to mark different area, place multiple points on the map.\n\nThe user always exceps a markdown response from you without the language specifaction using backticks(```) as the only language you can write is markdown and for any other requested language besides (conversational like english, hindi, ...) but no programming language, you will concisely and politely reject their request.",
+          'You are Flue, a research assistant designed to help college and university students by providing real-world, factual information relevant to their research questions.\n\nYou have a special ability: the **\'map\' tool**. When a user asks about a location or landmark, use this tool to display a map centered on that place. Do **not** create a heading or section labeled "Map" or anything similar. Instead, **naturally inform the user** within your response that a map is included — without using a fixed phrase like "The map is added." The rendering of the map is handled automatically, so no extra formatting or space is needed.\n\nYou must always respond in **markdown format only**, using elements like headings (from level 3 to level 6 only), lists, and tables. Do **not** use heading levels 1 (`#`) or 2 (`##`), and **never** use code block syntax like backticks (```) or specify any programming language.\n\nIf a user requests a response in any programming language, **politely and clearly reject the request**, explaining that your responses are limited to markdown and natural (conversational) languages like English or Hindi.',
         messages: [
           ...input.messages
             .filter((msg) => ["user", "assistant"].includes(msg.role))
@@ -40,36 +55,52 @@ export const messagesRouter = createTRPCRouter({
         tools: {
           map: tool({
             description:
-              "This tool should be used when talking about a location. It can be used to display a map at that location",
+              "Use this tool to display a map focused on one main location, optionally showing surrounding landmarks or nearby places.",
             inputSchema: z.object({
-              location: z
-                .string()
-                .describe(
-                  "The location to use as a center point for the map. Do not provide address, just the location name or structure name."
-                ),
+              locations: z.array(
+                z.object({
+                  location: z
+                    .string()
+                    .describe(
+                      "The name of the primary location or landmark. Do not include full addresses—only recognizable place names or landmarks."
+                    ),
+                  map_centered_here: z
+                    .boolean()
+                    .default(false)
+                    .describe(
+                      "Set to true to center the map on this location. Only one location can be centered per map call. If multiple are marked true, the first one will be used as the center. All others will appear as nearby landmarks."
+                    ),
+                })
+              ),
             }),
-            execute: async ({ location }) => {
-              const response = await fetch(
-                `https://www.gps-coordinates.net/geoproxy?q=${location}&key=9416bf2c8b1d4751be6a9a9e94ea85ca&no_annotations=1&language=en`
-              );
-              const json = (await response.json()) as {
+            execute: async ({
+              locations,
+            }): Promise<MapToolOutput> => {
+              const rawJsonResponses = (await Promise.all(
+                locations.map((location) =>
+                  fetchLocationCoords(location.location).then((res) =>
+                    res.json()
+                  )
+                )
+              )) as {
                 results: {
+                  formatted: string;
                   geometry: {
                     lat: number;
                     lng: number;
                   };
                 }[];
-              };
-
-              if (json.results?.length === 0) {
-                throw new Error(
-                  "Failed to display map for the requested location."
-                );
-              }
+              }[];
 
               return {
-                latitude: json.results[0]?.geometry?.lat,
-                longitude: json.results[0]?.geometry?.lng,
+                points: rawJsonResponses.map((res, idx) => {
+                  return {
+                    is_main: locations[idx].map_centered_here,
+                    lat: res.results[0].geometry.lat,
+                    lng: res.results[0].geometry.lng,
+                    location: res.results[0].formatted,
+                  };
+                }),
               };
             },
           }),
@@ -77,7 +108,9 @@ export const messagesRouter = createTRPCRouter({
       });
 
       let messageContent = "";
-      const toolCalls: unknown[] = [];
+      // eslint-disable-next-line
+      const toolCalls: ToolCall<any>[] = [];
+
       for await (const chunk of response.fullStream) {
         if (chunk.type === "text-start") {
           messageContent = "";
@@ -89,14 +122,17 @@ export const messagesRouter = createTRPCRouter({
         }
 
         if (chunk.type === "tool-result") {
-          const toolCall = {
-            type: chunk.type,
-            toolName: chunk.toolName,
-            input: chunk.input,
-            output: chunk.output,
-          };
-          toolCalls.push(toolCall);
-          yield toolCall;
+          const toolName: ValidTool = chunk.toolName as ValidTool;
+          if (validTools.includes(toolName)) {
+            const toolCall: ToolCall<typeof toolName> = {
+              type: chunk.type,
+              name: toolName,
+              input: chunk.input as ToolInput<typeof toolName>,
+              output: chunk.output as ToolOutput<typeof toolName>,
+            };
+            toolCalls.push(toolCall);
+            yield toolCall;
+          }
         }
       }
 
