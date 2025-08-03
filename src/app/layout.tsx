@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <TRPCReactProvider>
-      <html lang="en">
+      <html lang="en" className="dark">
         <body
           className={`${fontSpaceGrotesk.variable} antialiased w-full h-screen`}
         >

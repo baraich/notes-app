@@ -13,13 +13,13 @@ export default function UserMessage({
     <div className="flex justify-end">
       <div className="flex items-start gap-3 max-w-[85%]">
         <div className="flex flex-col items-end gap-2">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-2xl rounded-br-md shadow-lg max-w-full">
+          <div className="bg-gradient-to-r from-gray-600 to-gray-700 text-gray-100 px-4 py-3 rounded-2xl rounded-br-md shadow-lg max-w-full">
             <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
               {content}
             </p>
           </div>
           {timestamp && (
-            <div className="flex items-center gap-1 text-xs text-gray-400">
+            <div className="flex items-center gap-1 text-xs text-gray-500">
               <ClockIcon className="w-3 h-3" />
               <span>
                 {timestamp.toLocaleTimeString([], {
@@ -30,8 +30,8 @@ export default function UserMessage({
             </div>
           )}
         </div>
-        <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-md">
-          <UserIcon className="w-4 h-4 text-white" />
+        <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center shadow-md">
+          <UserIcon className="w-4 h-4 text-gray-100" />
         </div>
       </div>
     </div>

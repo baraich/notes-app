@@ -40,14 +40,14 @@ export default function ConversationPage({ params }: Props) {
   if (userConversations.data?.length === 0) {
     createConversation.mutate();
     return (
-      <div className="w-full h-full flex items-center justify-center">
-        <Loader2Icon className="text-gray-600 animate-spin" />
+      <div className="w-full h-full flex items-center justify-center bg-gray-900">
+        <Loader2Icon className="text-gray-400 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full bg-white">
+    <div className="w-full h-full bg-gray-900">
       <ConversationListing conversationId={conversationId} />
     </div>
   );

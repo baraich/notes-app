@@ -10,12 +10,12 @@ export default function Topbar() {
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
 
   return (
-    <header className="w-full flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white">
+    <header className="w-full flex items-center justify-between px-4 py-3 border-b border-gray-700 bg-gray-800">
       <div className="flex items-center gap-2">
         <Button
           size="icon"
           variant="ghost"
-          className="text-gray-600 hover:text-gray-900"
+          className="text-gray-400 hover:text-gray-200"
           onClick={() => setOpen(!open)}
         >
           <SidebarIcon className="h-5 w-5" />
@@ -25,7 +25,7 @@ export default function Topbar() {
         <Button
           onClick={() => setUpgradeDialogOpen(true)}
           size="sm"
-          className="bg-gray-100 text-primary border hover:bg-gray-200 hover:border-gray-300"
+          className="bg-gray-700 text-gray-200 border border-gray-600 hover:bg-gray-600 hover:border-gray-500"
         >
           <span>Upgrade</span>
           <SparklesIcon />

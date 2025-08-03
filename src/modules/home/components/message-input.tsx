@@ -20,10 +20,10 @@ export default function MessageInput({
 
   return (
     <div className="w-full">
-      <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col shadow-sm">
+      <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 flex flex-col shadow-sm">
         <div>
           <Textarea
-            className="flex-1 bg-transparent border-0 text-gray-900 placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none min-h-0 shadow-none"
+            className="flex-1 bg-transparent border-0 text-gray-100 placeholder:text-gray-500 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none min-h-0 shadow-none"
             placeholder="Ask me anything..."
             rows={1}
             cols={1}
@@ -42,7 +42,7 @@ export default function MessageInput({
               variant="outline"
               size="sm"
               onClick={() => setUploadDialogOpen(true)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600 hover:border-gray-500"
             >
               <Upload className="h-4 w-4" />
               Upload Files
@@ -52,7 +52,7 @@ export default function MessageInput({
           <Button
             size="icon"
             onClick={() => onSubmit(value)}
-            className="text-white bg-primary"
+            className="text-gray-100 bg-gray-600 hover:bg-gray-500"
           >
             <SendIcon />
           </Button>

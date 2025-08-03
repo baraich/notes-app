@@ -26,7 +26,7 @@ export default function MapDisplay({ location }: MapDisplayProps) {
     );
   }
   return (
-    <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center relative overflow-hidden">
+    <div className="w-full h-64 bg-gray-700 rounded-lg flex items-center justify-center relative overflow-hidden">
       <Map
         initialViewState={{
           latitude: location.latitude,
@@ -36,7 +36,7 @@ export default function MapDisplay({ location }: MapDisplayProps) {
         maplibreLogo={true}
         attributionControl={false}
         logoPosition={"bottom-right"}
-        mapStyle="https://tiles.openfreemap.org/styles/liberty"
+        mapStyle="https://tiles.openfreemap.org/styles/dark"
         style={{ position: "relative", height: "100%" }}
       >
         <Marker
