@@ -60,8 +60,8 @@ export default function SignIn() {
   return (
     <div className="mx-auto grid w-[350px] gap-6">
       <div className="grid gap-2 text-center">
-        <h1 className="text-3xl font-bold text-gray-100">Sign In</h1>
-        <p className="text-balance text-gray-400">
+        <h1 className="text-3xl font-bold text-white">Sign In</h1>
+        <p className="text-balance text-zinc-400">
           Let&apos;s get you back to your brilliant ideas.
         </p>
       </div>
@@ -72,11 +72,11 @@ export default function SignIn() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-200">Email</FormLabel>
+                <FormLabel className="text-zinc-200">Email</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="john.doe@example.com"
-                    className="bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-500 focus:border-gray-600"
+                    className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-700"
                     {...field}
                   />
                 </FormControl>
@@ -90,7 +90,7 @@ export default function SignIn() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center">
-                  <FormLabel className="text-gray-200">
+                  <FormLabel className="text-zinc-200">
                     Password
                   </FormLabel>
                   {/* <Link
@@ -104,7 +104,7 @@ export default function SignIn() {
                   <Input
                     type="password"
                     placeholder="********"
-                    className="bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-500 focus:border-gray-600"
+                    className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-700"
                     {...field}
                   />
                 </FormControl>
@@ -115,7 +115,7 @@ export default function SignIn() {
           <Button
             disabled={isPending}
             type="submit"
-            className="w-full bg-gray-700 hover:bg-gray-600 text-gray-100"
+            variant={"normal"}
           >
             {isPending ? (
               <Loader2Icon className="animate-spin" />
@@ -125,11 +125,11 @@ export default function SignIn() {
           </Button>
         </form>
       </Form>
-      <div className="mt-4 text-center text-sm text-gray-400">
+      <div className="mt-4 text-center text-sm text-zinc-400">
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"
-          className="underline text-gray-300 hover:text-gray-200"
+          className="underline text-zinc-300 hover:text-white"
         >
           Sign up
         </Link>

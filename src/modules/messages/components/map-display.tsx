@@ -3,17 +3,27 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
-import { Map, Marker } from "@vis.gl/react-maplibre";
+import { Map, Marker, Popup } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { useMemo, useState } from "react";
+import maplibregl from "maplibre-gl";
 
 interface MapDisplayProps {
   location: {
     latitude: number;
     longitude: number;
   };
+  locationName: string;
 }
 
-export default function MapDisplay({ location }: MapDisplayProps) {
+export default function MapDisplay({
+  location,
+  locationName,
+}: MapDisplayProps) {
+  const popup = useMemo(() => {
+    return new maplibregl.Popup().setText(locationName);
+  }, []);
+
   if (!location.latitude || !location.longitude) {
     return (
       <Alert variant={"destructive"}>
@@ -26,7 +36,7 @@ export default function MapDisplay({ location }: MapDisplayProps) {
     );
   }
   return (
-    <div className="w-full h-64 bg-gray-700 rounded-lg flex items-center justify-center relative overflow-hidden">
+    <div className="w-full h-64 bg-zinc-800 rounded-lg flex items-center justify-center relative overflow-hidden border border-zinc-800">
       <Map
         initialViewState={{
           latitude: location.latitude,
@@ -43,6 +53,7 @@ export default function MapDisplay({ location }: MapDisplayProps) {
           latitude={location.latitude}
           longitude={location.longitude}
           anchor="center"
+          popup={popup}
         ></Marker>
       </Map>
     </div>

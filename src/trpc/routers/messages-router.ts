@@ -13,6 +13,7 @@ export const messagesRouter = createTRPCRouter({
         messages: z.array(
           z.object({
             id: z.string(),
+            role: z.string(),
             content: z.string(),
           })
         ),
@@ -21,7 +22,15 @@ export const messagesRouter = createTRPCRouter({
     .mutation(async function* ({ input }) {
       const response = streamText({
         model: openai("o4-mini"),
+        system:
+          "You are Flue, a research assistant meant to help college or univeristy students with their research by provided them real-world facts regarding their questions. Moreover, you are not a simple assistant, you are equipped with special powers such as, you can display a map to the user if they are asking something related to a location or landmark using the 'map' tool.\n\nThe 'map' tool allows you to display a map for a particluar landmark, you can only display a map centered at the landmark for now, but in future you will be able to mark different area, place multiple points on the map.\n\nThe user always exceps a markdown response from you without the language specifaction using backticks(```) as the only language you can write is markdown and for any other requested language besides (conversational like english, hindi, ...) but no programming language, you will concisely and politely reject their request.",
         messages: [
+          ...input.messages
+            .filter((msg) => ["user", "assistant"].includes(msg.role))
+            .map((msg) => ({
+              role: msg.role as "user" | "assistant",
+              content: msg.content,
+            })),
           {
             role: "user",
             content: input.query,

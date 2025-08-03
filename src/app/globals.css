@@ -136,4 +136,12 @@
   .maplibregl-ctrl-attrib-button {
     @apply hidden;
   }
+
+  .maplibregl-popup-content {
+    @apply bg-zinc-800!;
+    font-family: var(--space-grotesk) !important;
+  }
+  .maplibregl-popup-close-button {
+    @apply px-2!  py-1;
+  }
 }

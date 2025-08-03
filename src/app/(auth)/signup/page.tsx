@@ -65,8 +65,8 @@ export default function SignUp() {
   return (
     <div className="mx-auto grid w-[350px] gap-6">
       <div className="grid gap-2 text-center">
-        <h1 className="text-3xl font-bold text-gray-100">Sign Up</h1>
-        <p className="text-balance text-gray-400">
+        <h1 className="text-3xl font-bold text-white">Sign Up</h1>
+        <p className="text-balance text-zinc-400">
           Enter your information to create an account.
         </p>
       </div>
@@ -77,12 +77,14 @@ export default function SignUp() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-200">Full Name</FormLabel>
+                <FormLabel className="text-zinc-200">
+                  Full Name
+                </FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="John Doe" 
-                    className="bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-500 focus:border-gray-600"
-                    {...field} 
+                  <Input
+                    placeholder="John Doe"
+                    className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-700"
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -94,11 +96,11 @@ export default function SignUp() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-200">Email</FormLabel>
+                <FormLabel className="text-zinc-200">Email</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="john.doe@example.com"
-                    className="bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-500 focus:border-gray-600"
+                    className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-700"
                     {...field}
                   />
                 </FormControl>
@@ -111,12 +113,14 @@ export default function SignUp() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-200">Password</FormLabel>
+                <FormLabel className="text-zinc-200">
+                  Password
+                </FormLabel>
                 <FormControl>
                   <Input
                     type="password"
                     placeholder="********"
-                    className="bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-500 focus:border-gray-600"
+                    className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-700"
                     {...field}
                   />
                 </FormControl>
@@ -127,7 +131,7 @@ export default function SignUp() {
           <Button
             disabled={isPending}
             type="submit"
-            className="w-full bg-gray-700 hover:bg-gray-600 text-gray-100"
+            variant={"normal"}
           >
             {isPending ? (
               <Loader2Icon className="animate-spin" />
@@ -137,9 +141,12 @@ export default function SignUp() {
           </Button>
         </form>
       </Form>
-      <div className="mt-4 text-center text-sm text-gray-400">
+      <div className="mt-4 text-center text-sm text-zinc-400">
         Already have an account?{" "}
-        <Link href="/signin" className="underline text-gray-300 hover:text-gray-200">
+        <Link
+          href="/signin"
+          className="underline text-zinc-300 hover:text-white"
+        >
           Sign in
         </Link>
       </div>
