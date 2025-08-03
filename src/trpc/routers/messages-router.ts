@@ -4,7 +4,6 @@ import { createTRPCRouter, protectedProcedure } from "../init";
 import z from "zod";
 import { prismaClient } from "@/lib/prisma-client";
 import {
-  MapToolInput,
   MapToolOutput,
   ToolCall,
   ToolInput,
