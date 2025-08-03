@@ -87,7 +87,6 @@ export const messagesRouter = createTRPCRouter({
             output: chunk.output,
           };
           toolCalls.push(toolCall);
-          console.log(toolCalls);
           yield toolCall;
         }
       }

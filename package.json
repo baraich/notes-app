@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "prisma generate && next build",
+    "dev": "next dev",
+    "build": "prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
@@ -57,6 +57,7 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
+    "libsql": "^0.5.17",
     "lucide-react": "^0.533.0",
     "maplibre-gl": "^5.6.1",
     "next": "15.4.2-canary.20",

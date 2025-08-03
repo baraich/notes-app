@@ -33,7 +33,8 @@ export default function Homepage() {
       if (conversationsList.data.length === 0) {
         createDefaultMutation.mutate();
       }
-      router.push(`/${conversationsList.data[0].id}`);
+      if (conversationsList.data.length > 0)
+        router.push(`/${conversationsList.data[0].id}`);
     },
     [conversationsList.data]
   );

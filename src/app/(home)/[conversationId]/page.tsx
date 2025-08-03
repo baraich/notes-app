@@ -13,7 +13,7 @@ import { Loader2Icon } from "lucide-react";
 
 interface Props {
   params: Promise<{
-    conversationId: string[] | undefined;
+    conversationId: string;
   }>;
 }
 
@@ -46,17 +46,9 @@ export default function ConversationPage({ params }: Props) {
     );
   }
 
-  if (
-    !conversationId ||
-    conversationId.length === 0 ||
-    conversationId.length > 1
-  ) {
-    return notFound();
-  }
-
   return (
     <div className="w-full h-full bg-white">
-      <ConversationListing conversationId={conversationId[0]} />
+      <ConversationListing conversationId={conversationId} />
     </div>
   );
 }

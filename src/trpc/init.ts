@@ -18,7 +18,6 @@ const t = initTRPC.context<Context>().create({
 
 const isAuthed = t.middleware(({ next, ctx }) => {
   if (!ctx.auth || !ctx.auth.user || !ctx.auth.session) {
-    console.log({ auth: ctx.auth });
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "You are not allowed to access this resource.",

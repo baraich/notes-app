@@ -14,7 +14,6 @@ interface MapDisplayProps {
 }
 
 export default function MapDisplay({ location }: MapDisplayProps) {
-  console.log({ location });
   if (!location.latitude || !location.longitude) {
     return (
       <Alert variant={"destructive"}>
