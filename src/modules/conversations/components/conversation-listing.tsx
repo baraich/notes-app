@@ -136,12 +136,12 @@ export default function ConversationListing({
 
   if (userConversation.isPending) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-white">
+      <div className="w-full h-full flex items-center justify-center bg-gray-900">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 border-gray-700 border-t-gray-400 rounded-full animate-spin"></div>
           </div>
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-400 text-sm">
             Loading conversation...
           </p>
         </div>
@@ -154,13 +154,13 @@ export default function ConversationListing({
   }
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-gray-50 to-white flex flex-col">
+    <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800 flex flex-col">
       {/* Modern Header */}
-      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-6 py-4">
+      <div className="sticky top-0 z-10 bg-gray-800/80 backdrop-blur-md border-b border-gray-700 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div>
-              <h1 className="font-semibold text-gray-900">
+              <h1 className="font-semibold text-gray-100">
                 {userConversation.data?.name || "Conversation"}
               </h1>
               <p className="text-xs text-gray-500">
@@ -177,7 +177,7 @@ export default function ConversationListing({
             <Button
               onClick={() => setUpgradeDialogOpen(true)}
               size="sm"
-              className="bg-gray-100 text-primary border hover:bg-gray-200 hover:border-gray-300 flex items-center gap-2"
+              className="bg-gray-700 text-gray-200 border border-gray-600 hover:bg-gray-600 hover:border-gray-500 flex items-center gap-2"
             >
               <span>Upgrade</span>
               <SparklesIcon className="w-4 h-4" />
@@ -218,7 +218,7 @@ export default function ConversationListing({
       </div>
 
       {/* Message Input */}
-      <div className="sticky bottom-0 bg-white/80 backdrop-blur-md border-t border-gray-200 px-6 py-4">
+      <div className="sticky bottom-0 bg-gray-800/80 backdrop-blur-md border-t border-gray-700 px-6 py-4">
         <div className="max-w-4xl mx-auto">
           <MessageInput
             onSubmit={(value) => handleMessage(value, setValue)}

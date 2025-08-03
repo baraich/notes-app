@@ -2,10 +2,10 @@ import React from "react";
 
 const PrivacyAndTermsPage = () => {
   return (
-    <div className="bg-white text-gray-800 font-sans leading-relaxed">
+    <div className="bg-gray-900 text-gray-100 font-sans leading-relaxed min-h-screen">
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div
-          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-8"
+          className="bg-red-900 border-l-4 border-red-500 text-red-200 p-4 mb-8"
           role="alert"
         >
           <p className="font-bold">Disclaimer</p>
@@ -18,12 +18,14 @@ const PrivacyAndTermsPage = () => {
           </p>
         </div>
 
-        <h1 className="text-4xl font-bold mb-4">Privacy Policy</h1>
-        <p className="text-sm text-gray-600 mb-8">
+        <h1 className="text-4xl font-bold mb-4 text-gray-100">
+          Privacy Policy
+        </h1>
+        <p className="text-sm text-gray-400 mb-8">
           Last Updated: August 1, 2025
         </p>
 
-        <p className="mb-6">
+        <p className="mb-6 text-gray-200">
           Welcome to our notes application (&quot;Service&quot;). We
           are committed to protecting the privacy of our users,
           especially students. This Privacy Policy explains what
@@ -31,10 +33,10 @@ const PrivacyAndTermsPage = () => {
           relation to it.
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           1. Information We Collect
         </h2>
-        <ul className="list-disc list-inside space-y-2 mb-6">
+        <ul className="list-disc list-inside space-y-2 mb-6 text-gray-200">
           <li>
             <strong>Account Information:</strong> When you sign up, we
             collect your name, university-provided email address, and
@@ -58,13 +60,13 @@ const PrivacyAndTermsPage = () => {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           2. How We Use Your Information
         </h2>
-        <p className="mb-6">
+        <p className="mb-6 text-gray-200">
           We use your information for the following purposes:
         </p>
-        <ul className="list-disc list-inside space-y-2 mb-6">
+        <ul className="list-disc list-inside space-y-2 mb-6 text-gray-200">
           <li>To provide, operate, and maintain the Service.</li>
           <li>
             To process and respond to your AI Prompts through our AI
@@ -82,14 +84,14 @@ const PrivacyAndTermsPage = () => {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           3. Data Sharing and Disclosure
         </h2>
-        <p className="mb-6">
+        <p className="mb-6 text-gray-200">
           We do not sell your personal data. We only share it with the
           following parties for the purposes described below:
         </p>
-        <ul className="list-disc list-inside space-y-2 mb-6">
+        <ul className="list-disc list-inside space-y-2 mb-6 text-gray-200">
           <li>
             <strong>OpenAI, L.L.C.:</strong> To power our AI chat
             feature, we send your AI Prompts to OpenAI&apos;s API. In
@@ -116,10 +118,10 @@ const PrivacyAndTermsPage = () => {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           4. Student Data and Intellectual Property
         </h2>
-        <p className="mb-6">
+        <p className="mb-6 text-gray-200">
           <strong>
             You own the intellectual property of the Notes and
             User-Generated Content you create.
@@ -130,30 +132,32 @@ const PrivacyAndTermsPage = () => {
           to you.
         </p>
 
-        <hr className="my-12" />
+        <hr className="my-12 border-gray-700" />
 
-        <h1 className="text-4xl font-bold mb-4">Terms of Service</h1>
-        <p className="text-sm text-gray-600 mb-8">
+        <h1 className="text-4xl font-bold mb-4 text-gray-100">
+          Terms of Service
+        </h1>
+        <p className="text-sm text-gray-400 mb-8">
           Last Updated: August 1, 2025
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           1. Acceptance of Terms
         </h2>
-        <p className="mb-6">
+        <p className="mb-6 text-gray-200">
           By using our Service, you agree to be bound by these Terms
           of Service. If you do not agree, do not use the Service.
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           2. Acceptable Use and Academic Integrity
         </h2>
-        <p className="mb-6">
+        <p className="mb-6 text-gray-200">
           You agree not to use the Service for any illegal purpose or
           to violate any laws. Crucially, you agree to uphold the
           principles of academic integrity.
         </p>
-        <ul className="list-disc list-inside space-y-2 mb-6">
+        <ul className="list-disc list-inside space-y-2 mb-6 text-gray-200">
           <li>
             The AI feature is a tool to assist your learning and
             research. It is not a tool for cheating or plagiarism.
@@ -170,10 +174,10 @@ const PrivacyAndTermsPage = () => {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           3. AI Feature Usage
         </h2>
-        <ul className="list-disc list-inside space-y-2 mb-6">
+        <ul className="list-disc list-inside space-y-2 mb-6 text-gray-200">
           <li>
             <strong>Disclaimer of Accuracy:</strong> The content
             generated by the AI is for informational purposes only. It
@@ -187,39 +191,39 @@ const PrivacyAndTermsPage = () => {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           4. Intellectual Property
         </h2>
-        <p className="mb-6">
+        <p className="mb-6 text-gray-200">
           As stated in our Privacy Policy, you own your content. We
           own the Service, including our branding, code, and all other
           aspects of the application. You may not copy, modify, or
           reverse-engineer our Service.
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           5. Termination
         </h2>
-        <p className="mb-6">
+        <p className="mb-6 text-gray-200">
           We reserve the right to suspend or terminate your account at
           any time for any reason, particularly for violations of our
           Acceptable Use and Academic Integrity policy. You can delete
           your account at any time.
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           6. Disclaimer of Warranties
         </h2>
-        <p className="mb-6">
+        <p className="mb-6 text-gray-200">
           The Service is provided &quot;as-is&quot; without any
           warranties of any kind. We do not guarantee that the service
           will be uninterrupted or error-free.
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-gray-100">
           7. Contact Us
         </h2>
-        <p className="mb-6">
+        <p className="mb-6 text-gray-200">
           If you have any questions about these Terms or our Privacy
           Policy, please contact us at [Your Contact Email Address].
         </p>

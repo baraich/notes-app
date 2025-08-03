@@ -15,15 +15,15 @@ export default function EmptyConversations({
   const [value, setValue] = useState("");
 
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div className="flex h-screen flex-col bg-gray-900">
       <Topbar />
       <main className="flex-grow flex items-center justify-center p-4">
         <div className="w-full max-w-3xl mx-auto flex flex-col items-center text-center">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-100 sm:text-5xl">
               How can I help you today?
             </h1>
-            <p className="mt-3 text-lg text-muted-foreground">
+            <p className="mt-3 text-lg text-gray-400">
               Start the conversation and I&apos;ll do my best to
               assist you.
             </p>

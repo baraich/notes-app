@@ -36,8 +36,8 @@ export default function AppSidebar() {
   );
 
   return (
-    <Sidebar className="px-2 pt-1 bg-white border-r border-gray-200 text-gray-900">
-      <SidebarHeader className="bg-white">
+    <Sidebar className="px-2 pt-1 bg-gray-800 border-r border-gray-700 text-gray-100">
+      <SidebarHeader className="bg-gray-800">
         <Image
           className="mt-2"
           src="/favicon.ico"
@@ -46,10 +46,10 @@ export default function AppSidebar() {
           height={32}
         />
       </SidebarHeader>
-      <SidebarContent className="bg-white">
+      <SidebarContent className="bg-gray-800">
         {favoriteLinks.length > 0 && (
           <SidebarGroup className="mt-2">
-            <SidebarGroupLabel className="text-gray-600">
+            <SidebarGroupLabel className="text-gray-400">
               Favorites
             </SidebarGroupLabel>
             <SidebarMenu className="gap-0">
@@ -58,9 +58,9 @@ export default function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     className={cn(
-                      "text-gray-700 p-2.5 h-full hover:bg-gray-100 hover:text-gray-900 active:bg-gray-100 active:text-gray-900 transition-colors",
+                      "text-gray-300 p-2.5 h-full hover:bg-gray-700 hover:text-gray-100 active:bg-gray-700 active:text-gray-100 transition-colors",
                       pathname.includes(link.id) &&
-                        "bg-gray-100 text-gray-900"
+                        "bg-gray-700 text-gray-100"
                     )}
                   >
                     <Link href={`/${link.id}`}>{link.name}</Link>
@@ -71,13 +71,13 @@ export default function AppSidebar() {
           </SidebarGroup>
         )}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-600">
+          <SidebarGroupLabel className="text-gray-400">
             Recents
           </SidebarGroupLabel>
           <SidebarMenu className="gap-0">
             {recentLinks.length === 0 && (
               <SidebarMenuItem>
-                <SidebarMenuButton className="text-gray-500 p-2.5 py-1 pl-2 h-full hover:bg-gray-100 hover:text-gray-700 active:bg-gray-100 active:text-gray-700 transition-colors">
+                <SidebarMenuButton className="text-gray-500 p-2.5 py-1 pl-2 h-full hover:bg-gray-700 hover:text-gray-300 active:bg-gray-700 active:text-gray-300 transition-colors">
                   No conversation yet!
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -87,9 +87,9 @@ export default function AppSidebar() {
                 <SidebarMenuButton
                   asChild
                   className={cn(
-                    "text-gray-700 p-2.5 h-full hover:bg-gray-100 hover:text-gray-900 active:bg-gray-100 active:text-gray-900 transition-colors",
+                    "text-gray-300 p-2.5 h-full hover:bg-gray-700 hover:text-gray-100 active:bg-gray-700 active:text-gray-100 transition-colors",
                     pathname.includes(link.id) &&
-                      "bg-gray-100 text-gray-900"
+                      "bg-gray-700 text-gray-100"
                   )}
                 >
                   <Link href={`/${link.id}`}>{link.name}</Link>
@@ -99,7 +99,7 @@ export default function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="bg-white pt-1 border-t border-gray-200">
+      <SidebarFooter className="bg-gray-800 pt-1 border-t border-gray-700">
         <Button
           onClick={() =>
             authClient.signOut().then(({ error }) =>
@@ -114,7 +114,7 @@ export default function AppSidebar() {
           }
           size={"sm"}
           variant="ghost"
-          className="w-full bg-gray-50 text-gray-700 mt-1 hover:bg-gray-100 border border-gray-200 hover:text-gray-900"
+          className="w-full bg-gray-700 text-gray-300 mt-1 hover:bg-gray-600 border border-gray-600 hover:text-gray-100"
         >
           Sign out
         </Button>
