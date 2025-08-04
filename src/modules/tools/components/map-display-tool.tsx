@@ -11,6 +11,7 @@ import {
   MapToolInput,
   MapToolOutput,
 } from "@/modules/tools/interface";
+import { Button } from "@/components/ui/button";
 
 interface MapDisplayProps {
   input: MapToolInput;
@@ -20,6 +21,9 @@ interface MapDisplayProps {
 export default function MapDisplay({ output }: MapDisplayProps) {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapStyle, setMapStyle] = useState<
+    "dark" | "positron" | "liberty"
+  >("dark");
 
   const fitBounds = () => {
     if (!mapRef.current || output.points.length < 2) return;
@@ -57,7 +61,7 @@ export default function MapDisplay({ output }: MapDisplayProps) {
     output.points.find((p) => p.is_main) || output.points[0];
 
   return (
-    <div className="w-full h-64 bg-zinc-800 rounded-lg flex items-center justify-center relative overflow-hidden border border-zinc-800">
+    <div className="w-full h-64 bg-zinc-800 rounded-lg flex flex-col items-center justify-center relative overflow-hidden border border-zinc-800">
       <Map
         reuseMaps
         onLoad={() => {
@@ -74,7 +78,11 @@ export default function MapDisplay({ output }: MapDisplayProps) {
         maplibreLogo={true}
         attributionControl={false}
         logoPosition={"bottom-right"}
-        mapStyle="https://tiles.openfreemap.org/styles/dark"
+        mapStyle={
+          "https://tiles.openfreemap.org/styles/dark"
+          // Light mode varient for the map.
+          // "https://tiles.openfreemap.org/styles/positron"
+        }
       >
         {output.points
           .sort((x, y) => Number(y.is_main) - Number(x.is_main))
