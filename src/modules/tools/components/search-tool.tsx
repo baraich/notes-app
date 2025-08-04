@@ -33,7 +33,7 @@ export default function SearchTool({ input, output }: Props) {
               <div className="text-sm text-zinc-400">
                 Search:{" "}
                 <span className="text-zinc-200 font-medium">
-                  "{searchTerm}"
+                  &quot;{searchTerm}&quot;
                 </span>
               </div>
               {totalCost && (
