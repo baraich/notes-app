@@ -11,6 +11,7 @@ import {
   ValidTool,
   validTools,
 } from "@/modules/tools/interface";
+import { env } from "@/env";
 
 function fetchLocationCoords(location: string) {
   return fetch(
@@ -37,7 +38,7 @@ export const messagesRouter = createTRPCRouter({
       const response = streamText({
         model: openai("o4-mini"),
         system:
-          'You are Flue, a research assistant designed to help college and university students by providing real-world, factual information relevant to their research questions.\n\nYou have a special ability: the **\'map\' tool**. When a user asks about a location or landmark, use this tool to display a map centered on that place. Do **not** create a heading or section labeled "Map" or anything similar. Instead, **naturally inform the user** within your response that a map is included — without using a fixed phrase like "The map is added." The rendering of the map is handled automatically, so no extra formatting or space is needed.\n\nYou must always respond in **markdown format only**, using elements like headings (from level 3 to level 6 only), lists, and tables. Do **not** use heading levels 1 (`#`) or 2 (`##`), and **never** use code block syntax like backticks (```) or specify any programming language.\n\nIf a user requests a response in any programming language, **politely and clearly reject the request**, explaining that your responses are limited to markdown and natural (conversational) languages like English or Hindi.',
+          "You are Flue, a research assistant designed to help college and university students by providing real-world, factual information relevant to their research questions.\n\nYou have access to two special tools: the **'search' tool** and the **'map' tool**.\n\n- Use the **'search' tool** when a user asks about current events, statistics, studies, comparisons, product details, or any other information that requires up-to-date or real-time facts from the web. Always aim to provide clear, sourced, and verifiable responses. Do **not** guess or make up details — use the search tool to find reliable information instead.\n\n- Use the **'map' tool** when a user asks about a specific place, city, country, landmark, or geographic area. The map will be rendered automatically, so do **not** format or label it. Simply incorporate a natural mention in your response that helps the user understand that the location is being shown visually, without stating \"the map is added.\"\n\nYou must always respond in **markdown format only**, using elements like headings (from level 3 to level 6 only), lists, and tables. Do **not** use heading levels 1 (#) or 2 (##), and **never** use code block syntax like backticks (```), nor specify any programming language.\n\nIf a user requests output in any programming language, **politely and clearly reject the request**, explaining that your responses are limited to markdown and natural (conversational) languages like English or Hindi.",
         messages: [
           ...input.messages
             .filter((msg) => ["user", "assistant"].includes(msg.role))
@@ -52,6 +53,41 @@ export const messagesRouter = createTRPCRouter({
         ],
         stopWhen: stepCountIs(5),
         tools: {
+          search: tool({
+            description:
+              "Use this tool to perfrom real-time web search to provide accurate and reliable response.",
+            inputSchema: z.object({
+              query: z.string().describe("The search query."),
+              max_tokens: z
+                .number()
+                .optional()
+                .describe(
+                  "Is optional but sets the search result size limit in tokens"
+                ),
+            }),
+            execute: async ({ query, max_tokens = 1024 }) => {
+              const endpoint =
+                "https://api.perplexity.ai/chat/completions";
+              const payload = {
+                model: "sonar-pro",
+                messages: [{ role: "user", content: query }],
+                max_tokens,
+              };
+              const res = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${env.PERPLEXITY_API_KEY}`,
+                  "Content-Type": "application/json",
+                  Accept: "application/json",
+                },
+                body: JSON.stringify(payload),
+              });
+              const data = await res.json();
+              return {
+                results: data,
+              };
+            },
+          }),
           map: tool({
             description:
               "Use this tool to display a map focused on one main location, optionally showing surrounding landmarks or nearby places.",
@@ -75,6 +111,7 @@ export const messagesRouter = createTRPCRouter({
             execute: async ({
               locations,
             }): Promise<MapToolOutput> => {
+              const hash = new Set();
               const rawJsonResponses = (await Promise.all(
                 locations.map((location) =>
                   fetchLocationCoords(location.location).then((res) =>
@@ -91,15 +128,25 @@ export const messagesRouter = createTRPCRouter({
                 }[];
               }[];
 
+              const points = rawJsonResponses.map((res, idx) => {
+                return {
+                  is_main: locations[idx].map_centered_here,
+                  lat: res.results[0].geometry.lat,
+                  lng: res.results[0].geometry.lng,
+                  location: res.results[0].formatted,
+                };
+              });
+
+              const uniquePoints = points.filter((point) => {
+                if (hash.has(point.location)) {
+                  return false;
+                }
+                hash.add(point.location);
+                return true;
+              });
+
               return {
-                points: rawJsonResponses.map((res, idx) => {
-                  return {
-                    is_main: locations[idx].map_centered_here,
-                    lat: res.results[0].geometry.lat,
-                    lng: res.results[0].geometry.lng,
-                    location: res.results[0].formatted,
-                  };
-                }),
+                points: uniquePoints,
               };
             },
           }),

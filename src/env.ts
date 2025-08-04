@@ -7,6 +7,7 @@ export const env = createEnv({
     BETTER_AUTH_URL: z.string().min(1),
     BETTER_AUTH_SECRET: z.string().min(1),
     OPENAI_API_KEY: z.string().min(1),
+    PERPLEXITY_API_KEY: z.string().min(1),
   },
   client: {
     // NEXT_PUBLIC_HEIGHT_API_KEY: z.string().min(1),

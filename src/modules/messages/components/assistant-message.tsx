@@ -1,17 +1,37 @@
 "use client";
-import { useEffect, useState } from "react";
-import MapDisplay from "./map-display";
+import { JSX, RefObject, useEffect, useState } from "react";
+import MapDisplayTool from "../../tools/components/map-display-tool";
 import { parseMarkdown } from "@/lib/markdown";
-import { ToolCall } from "@/modules/tools/interface";
+import { ToolCall, ValidTool } from "@/modules/tools/interface";
+import SearchTool from "@/modules/tools/components/search-tool";
 
 interface AssistantMessageProps {
   content: string;
   // eslint-disable-next-line
   toolCalls?: ToolCall<any>[];
+  messageStartRef: RefObject<HTMLDivElement | null>;
 }
+
+const toolUi: Record<
+  ValidTool,
+  // eslint-disable-next-line
+  (tool: ToolCall<any>) => JSX.Element
+> = {
+  map: (tool: ToolCall<"map">) => <MapDisplayTool {...tool} />,
+  search: (tool: ToolCall<"search">) => <SearchTool {...tool} />,
+};
+
+const beforeTools = {
+  search: toolUi["search"],
+} as const;
+
+const afterTools = {
+  map: toolUi["map"],
+} as const;
 
 export default function AssistantMessage({
   content,
+  messageStartRef,
   toolCalls,
 }: AssistantMessageProps) {
   const [cleanHtmlContent, setCleanHtmlContent] = useState("");
@@ -38,22 +58,38 @@ export default function AssistantMessage({
     <div className="flex justify-start">
       <div className="flex items-start gap-3 ">
         <div className="flex flex-col gap-2">
+          {toolCalls?.map((tool, idx) => {
+            const Tool =
+              beforeTools[tool.name as keyof typeof beforeTools];
+            if (!Tool) {
+              return null;
+            }
+            return (
+              <div key={idx}>
+                <Tool {...tool} />
+              </div>
+            );
+          })}
+          <div ref={messageStartRef}></div>
           <div className="bg-zinc-900 border border-zinc-800 text-white px-4 py-3 rounded-2xl rounded-bl-md shadow-lg">
             <div
-              className="prose prose-invert text-sm max-w-none w-full"
+              className="prose prose-invert text-sm max-w-none w-full prose-img:my-4 prose-pre:my-4 prose-table:my-4 prose-hr:my-4 prose-th:border prose-td:border prose-table:border-collapse"
               suppressHydrationWarning
               dangerouslySetInnerHTML={{ __html: cleanHtmlContent }}
             ></div>
           </div>
-          {toolCalls?.map((tool, idx) =>
-            tool.name == "map" ? (
-              <MapDisplay
-                key={idx}
-                input={tool.input}
-                output={tool.output}
-              />
-            ) : null
-          )}
+          {toolCalls?.map((tool, idx) => {
+            const Tool =
+              afterTools[tool.name as keyof typeof afterTools];
+            if (!Tool) {
+              return null;
+            }
+            return (
+              <div key={idx}>
+                <Tool {...tool} />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

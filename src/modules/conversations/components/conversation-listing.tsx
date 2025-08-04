@@ -49,7 +49,7 @@ export default function ConversationListing({
     }[]
   >([]);
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
-  const messageEndRef = useRef<HTMLDivElement>(null);
+  const messageStartRef = useRef<HTMLDivElement>(null);
 
   const createMessage = useMutation(
     trpc.stream.messages.completion.mutationOptions({
@@ -137,12 +137,12 @@ export default function ConversationListing({
 
   useEffect(
     function () {
-      if (!messageEndRef.current) return;
-      messageEndRef.current.scrollIntoView({
+      if (!messageStartRef.current) return;
+      messageStartRef.current.scrollIntoView({
         behavior: "smooth",
       });
     },
-    [messageEndRef, messages]
+    [messageStartRef, messages]
   );
 
   const handleMessage = (
@@ -227,13 +227,13 @@ export default function ConversationListing({
                   <UserMessage content={message.content} />
                 ) : (
                   <AssistantMessage
+                    messageStartRef={messageStartRef}
                     content={message.content}
                     toolCalls={message.toolCalls}
                   />
                 )}
               </div>
             ))}
-          <div ref={messageEndRef}></div>
         </div>
       </div>
 
