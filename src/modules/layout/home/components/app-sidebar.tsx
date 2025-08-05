@@ -27,6 +27,9 @@ import { cn, makeConversationsLink } from "@/lib/utils";
 import { Loader2Icon, PlusIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
+const sidebarMenuButtonClassname =
+  "text-zinc-300 p-2.5 h-full hover:bg-zinc-800 hover:text-white active:bg-zinc-800 active:text-white transition-colors";
+
 export default function AppSidebar() {
   const trpc = useTRPC();
   const router = useRouter();
@@ -91,7 +94,9 @@ export default function AppSidebar() {
               </>
             ) : conversations.length === 0 ? (
               <SidebarMenuItem>
-                <SidebarMenuButton className="text-zinc-500 p-2.5 py-1 pl-2 h-full hover:bg-zinc-800 hover:text-zinc-300 active:bg-zinc-800 active:text-zinc-300 transition-colors">
+                <SidebarMenuButton
+                  className={sidebarMenuButtonClassname}
+                >
                   No conversation yet!
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -101,7 +106,7 @@ export default function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     className={cn(
-                      "text-zinc-300 p-2.5 h-full hover:bg-zinc-800 hover:text-white active:bg-zinc-800 active:text-white transition-colors",
+                      sidebarMenuButtonClassname,
                       pathname.includes(link.id) &&
                         "bg-zinc-800 text-white"
                     )}
