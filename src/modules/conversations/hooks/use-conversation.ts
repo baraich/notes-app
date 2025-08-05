@@ -22,6 +22,7 @@ type LocalMessage = Omit<
   | "conversationsId"
   | "toolCalls"
 > & {
+  // eslint-disable-next-line
   toolCalls: ToolCall<any>[];
 };
 
@@ -152,6 +153,12 @@ export default function useConversation({ conversationId }: Props) {
   );
   const hasPendingInitialMessage =
     userConversation.data?.Message?.[0]?.status === "PENDING";
+
+  console.log({
+    messages,
+    hasPendingInitialMessage,
+    data: userConversation.data,
+  });
 
   useEffect(
     function () {

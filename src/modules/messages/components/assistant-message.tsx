@@ -65,19 +65,23 @@ export default function AssistantMessage({
               return null;
             }
             return (
-              <div key={idx}>
+              <div ref={messageStartRef} key={idx}>
                 <Tool {...tool} />
               </div>
             );
           })}
-          <div ref={messageStartRef}></div>
-          <div className="bg-zinc-900 border border-zinc-800 text-white px-4 py-3 rounded-2xl rounded-bl-md shadow-lg">
+          {cleanHtmlContent != "" && (
             <div
-              className="prose prose-invert text-sm max-w-none w-full prose-img:my-4 prose-pre:my-4 prose-table:my-4 prose-hr:my-4 prose-th:border prose-td:border prose-table:border-collapse prose-th:p-2! prose-td:p-2!"
-              suppressHydrationWarning
-              dangerouslySetInnerHTML={{ __html: cleanHtmlContent }}
-            ></div>
-          </div>
+              ref={messageStartRef}
+              className="bg-zinc-900 border border-zinc-800 text-white px-4 py-3 rounded-2xl rounded-bl-md shadow-lg"
+            >
+              <div
+                className="prose prose-invert text-sm max-w-none w-full prose-img:my-4 prose-pre:my-4 prose-table:my-4 prose-hr:my-4 prose-th:border prose-td:border prose-table:border-collapse prose-th:p-2! prose-td:p-2!"
+                suppressHydrationWarning
+                dangerouslySetInnerHTML={{ __html: cleanHtmlContent }}
+              ></div>
+            </div>
+          )}
           {toolCalls?.map((tool, idx) => {
             const Tool =
               afterTools[tool.name as keyof typeof afterTools];

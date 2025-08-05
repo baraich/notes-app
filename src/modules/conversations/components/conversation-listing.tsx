@@ -3,12 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import MessageInput from "@/modules/home/components/message-input";
-import { SparklesIcon } from "lucide-react";
+import { MoreVertical, SparklesIcon } from "lucide-react";
 import UserMessage from "@/modules/messages/components/user-message";
 import AssistantMessage from "@/modules/messages/components/assistant-message";
 import EmptyConversations from "./empty-conversation";
 import ComingSoonDialog from "@/components/coming-soon-dialog";
 import useConversation from "../hooks/use-conversation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Props {
   conversationId: string;
@@ -18,7 +24,6 @@ export default function ConversationListing({
   conversationId,
 }: Props) {
   const [value, setValue] = useState("");
-  const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
   const {
     userConversation,
     messages,
@@ -60,7 +65,7 @@ export default function ConversationListing({
       <div className="sticky top-0 z-10 bg-zinc-800/80 backdrop-blur-md border-b border-zinc-700 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div>
+            <div className="flex flex-col items-start justify-center">
               <h1 className="font-semibold text-gray-100">
                 {userConversation.data?.name || "Conversation"}
               </h1>
@@ -75,14 +80,17 @@ export default function ConversationListing({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant={"normal"}
-              onClick={() => setUpgradeDialogOpen(true)}
-            >
-              <span>Upgrade</span>
-              <SparklesIcon className="w-4 h-4" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="icon" variant="ghost">
+                  <MoreVertical className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Rename</DropdownMenuItem>
+                <DropdownMenuItem>Delete</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
@@ -102,7 +110,10 @@ export default function ConversationListing({
                 className="animate-in fade-in duration-300"
               >
                 {message.role === "USER" ? (
-                  <UserMessage content={message.content} />
+                  <UserMessage
+                    messageStartRef={messageStartRef}
+                    content={message.content}
+                  />
                 ) : (
                   <AssistantMessage
                     messageStartRef={messageStartRef}
@@ -126,11 +137,6 @@ export default function ConversationListing({
           />
         </div>
       </div>
-      <ComingSoonDialog
-        open={upgradeDialogOpen}
-        setOpen={setUpgradeDialogOpen}
-        description="The ability to upgrade to premium plan for higher usage limits would be shipped in future updates."
-      />
     </div>
   );
 }

@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function makeConversationsLink(id: string) {
   return `/c/${id}`;
 }
+
+export function getActualPrice(price: number) {
+  return price * 90;
+}
