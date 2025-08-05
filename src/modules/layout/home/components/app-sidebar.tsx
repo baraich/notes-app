@@ -15,18 +15,36 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTRPC } from "@/trpc/client";
-import { useQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { PlusIcon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { cn, makeConversationsLink } from "@/lib/utils";
+import { Loader2Icon, PlusIcon } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AppSidebar() {
   const trpc = useTRPC();
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const pathname = usePathname();
-  const { data: conversations = [] } = useQuery(
+  const { data: conversations = [], isLoading } = useQuery(
     trpc.conversations.listUserConversations.queryOptions()
+  );
+
+  const createConversationMutation = useMutation(
+    trpc.conversations.create.mutationOptions({
+      onSuccess(data) {
+        queryClient.invalidateQueries(
+          trpc.conversations.listUserConversations.queryOptions()
+        );
+        router.push(makeConversationsLink(data.id));
+      },
+    })
   );
 
   return (
@@ -43,37 +61,58 @@ export default function AppSidebar() {
       <SidebarContent className="bg-zinc-900">
         <SidebarGroup>
           <SidebarGroupLabel className="text-zinc-400 flex items-center justify-between">
-            <span>Conversations</span>
+            <span className="pl-0.5">Conversations</span>
             <Button
+              onClick={() => createConversationMutation.mutate()}
               size={"icon"}
               variant={"ghost"}
               className="h-7 w-7"
             >
-              <PlusIcon className="h-3.5! w-3.5!" />
+              {createConversationMutation.isPending ? (
+                <Loader2Icon className="h-3.5! w-3.5! animate-spin" />
+              ) : (
+                <PlusIcon className="h-3.5! w-3.5!" />
+              )}
             </Button>
           </SidebarGroupLabel>
           <SidebarMenu className="gap-0">
-            {conversations.length === 0 && (
+            {isLoading || createConversationMutation.isPending ? (
+              <>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <SidebarMenuItem key={i}>
+                    <SidebarMenuButton
+                      disabled
+                      className="h-full bg-transparent hover:bg-transparent"
+                    >
+                      <Skeleton className="h-4 w-full p-4" />
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </>
+            ) : conversations.length === 0 ? (
               <SidebarMenuItem>
                 <SidebarMenuButton className="text-zinc-500 p-2.5 py-1 pl-2 h-full hover:bg-zinc-800 hover:text-zinc-300 active:bg-zinc-800 active:text-zinc-300 transition-colors">
                   No conversation yet!
                 </SidebarMenuButton>
               </SidebarMenuItem>
+            ) : (
+              conversations.map((link) => (
+                <SidebarMenuItem key={link.id}>
+                  <SidebarMenuButton
+                    asChild
+                    className={cn(
+                      "text-zinc-300 p-2.5 h-full hover:bg-zinc-800 hover:text-white active:bg-zinc-800 active:text-white transition-colors",
+                      pathname.includes(link.id) &&
+                        "bg-zinc-800 text-white"
+                    )}
+                  >
+                    <Link href={makeConversationsLink(link.id)}>
+                      {link.name}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))
             )}
-            {conversations.map((link) => (
-              <SidebarMenuItem key={link.id}>
-                <SidebarMenuButton
-                  asChild
-                  className={cn(
-                    "text-zinc-300 p-2.5 h-full hover:bg-zinc-800 hover:text-white active:bg-zinc-800 active:text-white transition-colors",
-                    pathname.includes(link.id) &&
-                      "bg-zinc-800 text-white"
-                  )}
-                >
-                  <Link href={`/c/${link.id}`}>{link.name}</Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>

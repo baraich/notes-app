@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { use } from "react";
 import ConversationListing from "@/modules/conversations/components/conversation-listing";
 import { Loader2Icon } from "lucide-react";
+import { makeConversationsLink } from "@/lib/utils";
 
 interface Props {
   params: Promise<{
@@ -32,7 +33,7 @@ export default function ConversationPage({ params }: Props) {
         queryClient.invalidateQueries(
           trpc.conversations.listUserConversations.queryOptions()
         );
-        router.push(`/c/${data.id}`);
+        router.push(makeConversationsLink(data.id));
       },
     })
   );
