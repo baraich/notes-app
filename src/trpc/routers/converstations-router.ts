@@ -18,17 +18,37 @@ export const conversationsRouter = createTRPCRouter({
       return [];
     }
   }),
-  create: protectedProcedure.mutation(async ({ ctx }) => {
-    const conversation = await prismaClient.conversations.create({
-      data: {
-        name: "Untitled chat",
-        labels: [].join(","),
-        userId: ctx.auth.user.id,
-      },
-    });
+  create: protectedProcedure
+    .input(
+      z
+        .object({
+          pending_message: z.string().min(1),
+        })
+        .optional()
+    )
+    .mutation(async ({ ctx, input }) => {
+      const conversation = await prismaClient.conversations.create({
+        data: {
+          name: "Untitled chat",
+          labels: [].join(","),
+          userId: ctx.auth.user.id,
+          Message: !input?.pending_message
+            ? undefined
+            : {
+                create: {
+                  content: input.pending_message,
+                  cost: "0",
+                  role: "USER",
+                  status: "PENDING",
+                  toolCalls: JSON.stringify({}),
+                  totalCost: "0",
+                },
+              },
+        },
+      });
 
-    return conversation;
-  }),
+      return conversation;
+    }),
   listConversationWithMessages: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {

@@ -135,15 +135,24 @@ enum ModelRole {
   ASSISTANT
 }
 
+enum MessageStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+}
+
 model Message {
-  id              String    @id @default(cuid())
+  id              String        @id @default(cuid())
   conversationsId String
   role            ModelRole
   content         String
   toolCalls       String
+  status          MessageStatus
+  cost            String
+  totalCost       String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  conversation Conversations @relation(fields: [conversationsId], references: [id])
+  conversation Conversations @relation(fields: [conversationsId], references: [id], onDelete: Cascade)
 }

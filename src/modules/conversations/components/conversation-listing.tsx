@@ -1,26 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useTRPC } from "@/trpc/client";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useState } from "react";
 import MessageInput from "@/modules/home/components/message-input";
 import { SparklesIcon } from "lucide-react";
 import UserMessage from "@/modules/messages/components/user-message";
 import AssistantMessage from "@/modules/messages/components/assistant-message";
 import EmptyConversations from "./empty-conversation";
 import ComingSoonDialog from "@/components/coming-soon-dialog";
-import { ToolCall } from "@/modules/tools/interface";
+import useConversation from "../hooks/use-conversation";
 
 interface Props {
   conversationId: string;
@@ -29,135 +17,25 @@ interface Props {
 export default function ConversationListing({
   conversationId,
 }: Props) {
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
-  const userConversation = useQuery(
-    trpc.conversations.listConversationWithMessages.queryOptions({
-      id: conversationId,
-    })
-  );
-
   const [value, setValue] = useState("");
-  const [messages, setMessages] = useState<
-    {
-      id: string;
-      role: "user" | "assistant";
-      content: string;
-      timestamp?: Date;
-      // eslint-disable-next-line
-      toolCalls?: ToolCall<any>[];
-    }[]
-  >([]);
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
-  const messageStartRef = useRef<HTMLDivElement>(null);
+  const {
+    userConversation,
+    messages,
+    messageStartRef,
+    handleMessage,
+    hasPendingMessages,
+    isPending,
+  } = useConversation({
+    conversationId,
+  });
 
-  const createMessage = useMutation(
-    trpc.stream.messages.completion.mutationOptions({
-      onMutate: ({ query }) => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: crypto.randomUUID(),
-            role: "user",
-            content: query,
-            timestamp: new Date(),
-          },
-          {
-            id: "streaming-assistant-response",
-            role: "assistant",
-            content: "",
-            timestamp: new Date(),
-            toolCalls: [],
-          },
-        ]);
-      },
-      onSuccess: async (data) => {
-        for await (const chunk of data) {
-          if (typeof chunk === "string") {
-            setMessages((prev) =>
-              prev.map((m) =>
-                m.id === "streaming-assistant-response"
-                  ? { ...m, content: m.content + chunk }
-                  : m
-              )
-            );
-          } else if (typeof chunk === "object") {
-            setMessages((prev) =>
-              prev.map((m) =>
-                m.id === "streaming-assistant-response"
-                  ? {
-                      ...m,
-                      toolCalls: [...(m.toolCalls || []), chunk],
-                    }
-                  : m
-              )
-            );
-          }
-        }
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === "streaming-assistant-response"
-              ? { ...m, id: crypto.randomUUID() }
-              : m
-          )
-        );
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries(
-          trpc.conversations.listConversationWithMessages.queryOptions(
-            {
-              id: conversationId,
-            }
-          )
-        );
-      },
-      throwOnError: false,
-    })
-  );
-
-  useEffect(
-    function () {
-      if (!userConversation.data) return;
-      setMessages(
-        userConversation.data.Message.map((dbMessage) => ({
-          id: dbMessage.id,
-          role: dbMessage.role.toLowerCase() as "user" | "assistant",
-          content: dbMessage.content,
-          timestamp: dbMessage.createdAt
-            ? new Date(dbMessage.createdAt)
-            : new Date(),
-          toolCalls: dbMessage.toolCalls
-            ? JSON.parse(dbMessage.toolCalls)
-            : [],
-        }))
-      );
-    },
-    [userConversation.data]
-  );
-
-  useEffect(
-    function () {
-      if (!messageStartRef.current) return;
-      messageStartRef.current.scrollIntoView({
-        behavior: "smooth",
-      });
-    },
-    [messageStartRef, messages]
-  );
-
-  const handleMessage = (
-    val: string,
-    setChildVal: Dispatch<SetStateAction<string>>
-  ) => {
-    createMessage.mutate({
-      query: val,
-      conversationId,
-      messages: messages.slice(-4),
-    });
-    setChildVal("");
+  const onMessage = (val: string) => {
+    handleMessage(val);
+    setValue("");
   };
 
-  if (userConversation.isPending) {
+  if (isPending) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-black">
         <div className="flex flex-col items-center gap-4">
@@ -173,7 +51,7 @@ export default function ConversationListing({
   }
 
   if (!(messages.length > 0)) {
-    return <EmptyConversations handleMessage={handleMessage} />;
+    return <EmptyConversations />;
   }
 
   return (
@@ -223,7 +101,7 @@ export default function ConversationListing({
                 key={message.id}
                 className="animate-in fade-in duration-300"
               >
-                {message.role === "user" ? (
+                {message.role === "USER" ? (
                   <UserMessage content={message.content} />
                 ) : (
                   <AssistantMessage
@@ -241,8 +119,9 @@ export default function ConversationListing({
       <div className="sticky backdrop-blur-md bottom-0 px-6 pb-4">
         <div className="max-w-4xl mx-auto">
           <MessageInput
-            onSubmit={(value) => handleMessage(value, setValue)}
+            onSubmit={(value) => onMessage(value)}
             value={value}
+            disabled={hasPendingMessages}
             setValue={setValue}
           />
         </div>
