@@ -6,13 +6,15 @@ import { Dispatch, SetStateAction } from "react";
 
 interface Props {
   value: string;
-  setValue: Dispatch<SetStateAction<string>>;
   onSubmit: (value: string) => void;
+  disabled?: boolean;
+  setValue: Dispatch<SetStateAction<string>>;
 }
 
 export default function MessageInput({
   value,
   setValue,
+  disabled,
   onSubmit,
 }: Props) {
   return (
@@ -25,6 +27,7 @@ export default function MessageInput({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={(e) => {
+            if (disabled) return;
             if (e.key === "Enter" && e.metaKey) {
               onSubmit(value);
             }
@@ -32,7 +35,11 @@ export default function MessageInput({
         />
         <Button
           size="icon"
-          onClick={() => onSubmit(value)}
+          disabled={disabled}
+          onClick={() => {
+            if (disabled) return;
+            onSubmit(value);
+          }}
           className="text-white bg-zinc-800 hover:bg-zinc-700 ml-2"
         >
           <SendIcon />

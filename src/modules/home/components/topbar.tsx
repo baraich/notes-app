@@ -2,11 +2,13 @@
 import ComingSoonDialog from "@/components/coming-soon-dialog";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { SidebarIcon, SparklesIcon } from "lucide-react";
 import { useState } from "react";
 
 export default function Topbar() {
-  const { open, setOpen } = useSidebar();
+  const isMobile = useIsMobile();
+  const { open, setOpen, openMobile, setOpenMobile } = useSidebar();
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
 
   return (
@@ -16,7 +18,9 @@ export default function Topbar() {
           size="icon"
           variant="ghost"
           className="text-zinc-400 hover:text-white"
-          onClick={() => setOpen(!open)}
+          onClick={() =>
+            isMobile ? setOpenMobile(!openMobile) : setOpen(!open)
+          }
         >
           <SidebarIcon className="h-5 w-5" />
         </Button>

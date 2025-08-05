@@ -1,0 +1,175 @@
+"use client";
+
+import { useTRPC } from "@/trpc/client";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import { ToolCall } from "@/modules/tools/interface";
+import { Message } from "@/generated/prisma";
+
+interface Props {
+  conversationId: string;
+}
+
+type LocalMessage = Omit<
+  Message,
+  | "createdAt"
+  | "updatedAt"
+  | "totalCost"
+  | "conversationsId"
+  | "toolCalls"
+> & {
+  toolCalls: ToolCall<any>[];
+};
+
+export default function useConversation({ conversationId }: Props) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const userConversation = useQuery(
+    trpc.conversations.listConversationWithMessages.queryOptions({
+      id: conversationId,
+    })
+  );
+
+  const [messages, setMessages] = useState<LocalMessage[]>([]);
+  const messageStartRef = useRef<HTMLDivElement>(null);
+
+  const updateStreamingMessage = (
+    updater: (message: LocalMessage) => LocalMessage
+  ) => {
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === "streaming-assistant-response" ? updater(m) : m
+      )
+    );
+  };
+
+  const createMessage = useMutation(
+    trpc.stream.messages.completion.mutationOptions({
+      onMutate: ({ query }) => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: crypto.randomUUID(),
+            role: "USER",
+            content: query,
+            toolCalls: [],
+            status: "PENDING",
+            cost: "0",
+          },
+          {
+            id: "streaming-assistant-response",
+            role: "ASSISTANT",
+            content: "",
+            toolCalls: [],
+            status: "PENDING",
+            cost: "0",
+          },
+        ]);
+      },
+      onSuccess: async (data) => {
+        for await (const chunk of data) {
+          if (typeof chunk === "string") {
+            updateStreamingMessage((m) => ({
+              ...m,
+              content: m.content + chunk,
+            }));
+          } else if (typeof chunk === "object") {
+            updateStreamingMessage((m) => ({
+              ...m,
+              toolCalls: [...m.toolCalls, chunk],
+            }));
+          }
+        }
+        updateStreamingMessage((m) => ({
+          ...m,
+          id: crypto.randomUUID(),
+        }));
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(
+          trpc.conversations.listConversationWithMessages.queryOptions(
+            {
+              id: conversationId,
+            }
+          )
+        );
+      },
+      throwOnError: false,
+    })
+  );
+
+  useEffect(() => {
+    if (!userConversation.data) return;
+    setMessages(
+      userConversation.data.Message.map((dbMessage) => {
+        const {
+          createdAt,
+          updatedAt,
+          totalCost,
+          conversationsId,
+          ...message
+        } = dbMessage;
+        return {
+          ...message,
+          toolCalls: message.toolCalls
+            ? JSON.parse(message.toolCalls as string)
+            : [],
+        };
+      })
+    );
+  }, [userConversation.data]);
+
+  useEffect(() => {
+    if (!messageStartRef.current) return;
+    messageStartRef.current.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messageStartRef, messages]);
+
+  const handleMessage = (
+    val: string,
+    pending_message_id?: string
+  ) => {
+    if (pending_message_id) {
+      setMessages((messages) => {
+        return messages.slice(1, messages.length);
+      });
+    }
+    createMessage.mutate({
+      query: val,
+      conversationId,
+      pending_message_id,
+      messages: messages.slice(-4),
+    });
+  };
+
+  const hasPendingMessages = messages.find(
+    (message) => message.status === "PENDING"
+  );
+  const hasPendingInitialMessage =
+    userConversation.data?.Message?.[0]?.status === "PENDING";
+
+  useEffect(
+    function () {
+      if (!hasPendingInitialMessage) return;
+      handleMessage(
+        userConversation.data?.Message?.[0]?.content as string,
+        userConversation.data?.Message?.[0]?.id as string
+      );
+    },
+    [hasPendingInitialMessage]
+  );
+
+  return {
+    userConversation,
+    messages,
+    messageStartRef,
+    handleMessage,
+    hasPendingMessages: !!hasPendingMessages,
+    isPending: userConversation.isPending,
+  };
+}

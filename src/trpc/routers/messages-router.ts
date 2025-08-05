@@ -23,6 +23,7 @@ export const messagesRouter = createTRPCRouter({
   completion: protectedProcedure
     .input(
       z.object({
+        pending_message_id: z.string().optional(),
         query: z.string(),
         conversationId: z.string(),
         messages: z.array(
@@ -183,20 +184,36 @@ export const messagesRouter = createTRPCRouter({
       }
 
       await prismaClient.$transaction([
-        prismaClient.message.create({
-          data: {
-            role: "USER",
-            content: input.query,
-            toolCalls: [].join(""),
-            conversationsId: input.conversationId,
-          },
-        }),
+        input.pending_message_id
+          ? prismaClient.message.update({
+              data: {
+                status: "PROCESSED",
+              },
+              where: {
+                id: input.pending_message_id,
+              },
+            })
+          : prismaClient.message.create({
+              data: {
+                role: "USER",
+                content: input.query,
+                toolCalls: [].join(""),
+                conversationsId: input.conversationId,
+                cost: "0",
+                totalCost: "0",
+                status: "PROCESSED",
+              },
+            }),
         prismaClient.message.create({
           data: {
             role: "ASSISTANT",
             content: messageContent,
             toolCalls: JSON.stringify(toolCalls),
             conversationsId: input.conversationId,
+            status: "PROCESSED",
+            // TODO: Add cost calculation
+            cost: "0",
+            totalCost: "0",
           },
         }),
       ]);
