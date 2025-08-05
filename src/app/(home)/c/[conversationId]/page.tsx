@@ -32,7 +32,7 @@ export default function ConversationPage({ params }: Props) {
         queryClient.invalidateQueries(
           trpc.conversations.listUserConversations.queryOptions()
         );
-        router.push(`/${data.id}`);
+        router.push(`/c/${data.id}`);
       },
     })
   );
@@ -40,14 +40,14 @@ export default function ConversationPage({ params }: Props) {
   if (userConversations.data?.length === 0) {
     createConversation.mutate();
     return (
-      <div className="w-full h-full flex items-center justify-center bg-black">
+      <div className="w-full h-full flex items-center justify-center bg-zinc-950">
         <Loader2Icon className="text-zinc-400 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full bg-black">
+    <div className="w-full h-full bg-zinc-950">
       <ConversationListing conversationId={conversationId} />
     </div>
   );
