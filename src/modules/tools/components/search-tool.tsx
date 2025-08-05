@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { getActualPrice } from "@/lib/utils";
 
 interface Props {
   input: SearchToolInput;
@@ -39,9 +40,9 @@ export default function SearchTool({ input, output }: Props) {
               {totalCost && (
                 <div>
                   <span className="text-zinc-400 text-xs">
-                    ₹
+                    {"₹"}
                     {(
-                      Math.ceil(totalCost * 87.65 * 100) / 100
+                      Math.ceil(getActualPrice(totalCost) * 100) / 100
                     ).toFixed(2)}
                   </span>
                 </div>
