@@ -3,6 +3,16 @@ import { createTRPCRouter, protectedProcedure } from "../init";
 import z from "zod";
 
 export const conversationsRouter = createTRPCRouter({
+  getById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await prismaClient.conversations.findFirst({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id,
+        },
+      });
+    }),
   listUserConversations: protectedProcedure.query(async ({ ctx }) => {
     try {
       const conversations = await prismaClient.conversations.findMany(

@@ -12,6 +12,7 @@ import {
   validTools,
 } from "@/modules/tools/interface";
 import { env } from "@/env";
+import { TRPCError } from "@trpc/server";
 
 function fetchLocationCoords(location: string) {
   return fetch(
@@ -35,7 +36,24 @@ export const messagesRouter = createTRPCRouter({
         ),
       })
     )
-    .mutation(async function* ({ input }) {
+    .mutation(async function* ({ input, ctx }) {
+      // Validating the conversation exists and the user owns it.
+      const conversation = await prismaClient.conversations.findFirst(
+        {
+          where: {
+            id: input.conversationId,
+            userId: ctx.auth.user.id,
+          },
+        }
+      );
+
+      if (!conversation) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Conversation not found or access denied",
+        });
+      }
+
       const response = streamText({
         model: openai("o4-mini"),
         system:
@@ -185,11 +203,17 @@ export const messagesRouter = createTRPCRouter({
         }
       }
 
+      console.log("Creating message with:", {
+        conversationId: input.conversationId,
+        hasConversation: !!conversation,
+        userId: ctx.auth.user.id,
+      });
       await prismaClient.$transaction([
         input.pending_message_id
           ? prismaClient.message.update({
               data: {
                 status: "PROCESSED",
+                conversationsId: conversation.id,
               },
               where: {
                 id: input.pending_message_id,
@@ -200,7 +224,7 @@ export const messagesRouter = createTRPCRouter({
                 role: "USER",
                 content: input.query,
                 toolCalls: [].join(""),
-                conversationsId: input.conversationId,
+                conversationsId: conversation.id,
                 cost: "0",
                 totalCost: "0",
                 status: "PROCESSED",

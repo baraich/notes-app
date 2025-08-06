@@ -16,12 +16,11 @@ interface Props {
 export default function ConversationPage({ params }: Props) {
   const trpc = useTRPC();
   const { conversationId } = use(params);
-  // TODO: Create an endpoint to retrieve a single conversation, not a list
-  const userConversations = useQuery(
-    trpc.conversations.listUserConversations.queryOptions()
+  const conversation = useQuery(
+    trpc.conversations.getById.queryOptions({ id: conversationId })
   );
 
-  if (userConversations.isLoading) {
+  if (conversation.isLoading || !conversation.data) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-zinc-950">
         <Loader2Icon className="text-zinc-400 animate-spin" />
@@ -29,11 +28,7 @@ export default function ConversationPage({ params }: Props) {
     );
   }
 
-  if (
-    !!userConversations.data?.find(
-      (conversation) => conversation.id === conversationId
-    )
-  )
+  if (conversation.data.id === conversationId)
     return (
       <div className="w-full h-full bg-zinc-950">
         <ConversationListing conversationId={conversationId} />
