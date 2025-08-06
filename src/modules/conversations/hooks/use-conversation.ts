@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ToolCall } from "@/modules/tools/interface";
 import { Message } from "@/generated/prisma";
 
@@ -29,6 +29,7 @@ type LocalMessage = Omit<
 export default function useConversation({ conversationId }: Props) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+
   const userConversation = useQuery(
     trpc.conversations.listConversationWithMessages.queryOptions({
       id: conversationId,
@@ -38,19 +39,28 @@ export default function useConversation({ conversationId }: Props) {
   const [messages, setMessages] = useState<LocalMessage[]>([]);
   const messageStartRef = useRef<HTMLDivElement>(null);
 
-  const updateStreamingMessage = (
-    updater: (message: LocalMessage) => LocalMessage
-  ) => {
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === "streaming-assistant-response" ? updater(m) : m
-      )
-    );
-  };
+  const updateStreamingMessage = useCallback(
+    (updater: (message: LocalMessage) => LocalMessage) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === "streaming-assistant-response" ? updater(m) : m
+        )
+      );
+    },
+    []
+  );
 
   const createMessage = useMutation(
     trpc.stream.messages.completion.mutationOptions({
       onMutate: ({ query }) => {
+        // Validate inputs before proceeding
+        if (!query?.trim()) {
+          throw new Error("Message content cannot be empty");
+        }
+        if (!conversationId) {
+          throw new Error("Conversation ID is required");
+        }
+
         setMessages((prev) => [
           ...prev,
           {
@@ -129,47 +139,56 @@ export default function useConversation({ conversationId }: Props) {
     messageStartRef.current.scrollIntoView({
       behavior: "smooth",
     });
-  }, [messageStartRef, messages]);
+  }, [messages]);
 
-  const handleMessage = (
-    val: string,
-    pending_message_id?: string
-  ) => {
-    if (pending_message_id) {
-      setMessages((messages) => {
-        return messages.slice(1, messages.length);
+  const handleMessage = useCallback(
+    (val: string, pending_message_id?: string) => {
+      // Add validation
+      if (!val?.trim()) {
+        console.error("Cannot send empty message");
+        return;
+      }
+      if (!conversationId) {
+        console.error("No conversation ID provided");
+        return;
+      }
+
+      if (pending_message_id) {
+        setMessages((messages) => {
+          return messages.slice(1, messages.length);
+        });
+      }
+
+      createMessage.mutate({
+        query: val,
+        conversationId,
+        pending_message_id,
+        messages: messages.slice(-4),
       });
-    }
-    createMessage.mutate({
-      query: val,
-      conversationId,
-      pending_message_id,
-      messages: messages.slice(-4),
-    });
-  };
+    },
+    [conversationId, createMessage, messages]
+  );
 
   const hasPendingMessages = messages.find(
     (message) => message.status === "PENDING"
   );
-  const hasPendingInitialMessage =
-    userConversation.data?.Message?.[0]?.status === "PENDING";
 
-  console.log({
-    messages,
-    hasPendingInitialMessage,
-    data: userConversation.data,
-  });
+  // Fixed effect with proper dependencies and validation
+  useEffect(() => {
+    if (
+      !userConversation.data ||
+      !(userConversation.data.Message[0].status === "PENDING")
+    )
+      return;
 
-  useEffect(
-    function () {
-      if (!hasPendingInitialMessage) return;
-      handleMessage(
-        userConversation.data?.Message?.[0]?.content as string,
-        userConversation.data?.Message?.[0]?.id as string
-      );
-    },
-    [hasPendingInitialMessage]
-  );
+    const firstMessage = userConversation.data.Message[0];
+    if (!firstMessage?.content || !firstMessage?.id) {
+      console.error("Invalid pending message data");
+      return;
+    }
+
+    handleMessage(firstMessage.content, firstMessage.id);
+  }, [userConversation.data]);
 
   return {
     userConversation,
