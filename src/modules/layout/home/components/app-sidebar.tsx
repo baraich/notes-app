@@ -41,11 +41,24 @@ export default function AppSidebar() {
 
   const createConversationMutation = useMutation(
     trpc.conversations.create.mutationOptions({
+      onMutate() {
+        toast.loading("Creating a new conversation", {
+          id: "create-conversation-sidebar",
+        });
+      },
       onSuccess(data) {
         queryClient.invalidateQueries(
           trpc.conversations.listUserConversations.queryOptions()
         );
         router.push(makeConversationsLink(data.id));
+        toast.success("Conversation created", {
+          id: "create-conversation-sidebar",
+        });
+      },
+      onError() {
+        toast.error("Failed to create a new conversation", {
+          id: "create-conversation-sidebar",
+        });
       },
     })
   );

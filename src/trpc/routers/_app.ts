@@ -1,5 +1,5 @@
 import { createTRPCRouter } from "../init";
-import { conversationsRouter } from "./converstations-router";
+import { conversationsRouter } from "./conversations-router";
 import { streamingRouter } from "./streaming-router";
 
 export const appRouter = createTRPCRouter({

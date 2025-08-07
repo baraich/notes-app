@@ -1,20 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import MessageInput from "@/modules/home/components/message-input";
-import { MoreVertical, SparklesIcon } from "lucide-react";
 import UserMessage from "@/modules/messages/components/user-message";
 import AssistantMessage from "@/modules/messages/components/assistant-message";
 import EmptyConversations from "./empty-conversation";
-import ComingSoonDialog from "@/components/coming-soon-dialog";
 import useConversation from "../hooks/use-conversation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import ShimmerMessage from "@/modules/messages/components/shimmer-message";
+import ModernHeader from "./modern-header";
 
 interface Props {
   conversationId: string;
@@ -31,6 +24,7 @@ export default function ConversationListing({
     handleMessage,
     hasPendingMessages,
     isPending,
+    isMessageStreamPending,
   } = useConversation({
     conversationId,
   });
@@ -62,38 +56,11 @@ export default function ConversationListing({
   return (
     <div className="w-full h-full bg-zinc-950 flex flex-col">
       {/* Modern Header */}
-      <div className="sticky top-0 z-10 bg-zinc-800/80 backdrop-blur-md border-b border-zinc-700 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex flex-col items-start justify-center">
-              <h1 className="font-semibold text-gray-100">
-                {userConversation.data?.name || "Conversation"}
-              </h1>
-              <p className="text-xs text-gray-500">
-                Created at{" "}
-                {userConversation.data?.createdAt
-                  ? new Date(
-                      userConversation.data.createdAt
-                    ).toLocaleDateString()
-                  : "..."}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="ghost">
-                  <MoreVertical className="w-5 h-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>Rename</DropdownMenuItem>
-                <DropdownMenuItem>Delete</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </div>
+      <ModernHeader
+        conversationId={conversationId}
+        createdAt={userConversation.data?.createdAt}
+        name={userConversation.data?.name}
+      />
 
       {/* Messages Container */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6 max-w-screen">
@@ -123,6 +90,8 @@ export default function ConversationListing({
                 )}
               </div>
             ))}
+
+          {isMessageStreamPending && <ShimmerMessage />}
         </div>
       </div>
 

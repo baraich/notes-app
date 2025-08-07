@@ -29,6 +29,8 @@ type LocalMessage = Omit<
 export default function useConversation({ conversationId }: Props) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const [isMessageStreamPending, setIsMessageStreamPending] =
+    useState(false);
 
   const userConversation = useQuery(
     trpc.conversations.listConversationWithMessages.queryOptions({
@@ -61,6 +63,7 @@ export default function useConversation({ conversationId }: Props) {
           throw new Error("Conversation ID is required");
         }
 
+        setIsMessageStreamPending(true);
         setMessages((prev) => [
           ...prev,
           {
@@ -82,6 +85,7 @@ export default function useConversation({ conversationId }: Props) {
         ]);
       },
       onSuccess: async (data) => {
+        setIsMessageStreamPending(false);
         for await (const chunk of data) {
           if (typeof chunk === "string") {
             updateStreamingMessage((m) => ({
@@ -110,6 +114,9 @@ export default function useConversation({ conversationId }: Props) {
         );
       },
       throwOnError: false,
+      onError() {
+        setIsMessageStreamPending(false);
+      },
     })
   );
 
@@ -195,6 +202,12 @@ export default function useConversation({ conversationId }: Props) {
     messages,
     messageStartRef,
     handleMessage,
+    isMessageStreamPending:
+      isMessageStreamPending ||
+      (messages.length > 0 &&
+        messages[messages.length - 1].role === "ASSISTANT")
+        ? messages[messages.length - 1].content == ""
+        : false,
     hasPendingMessages: !!hasPendingMessages,
     isPending: userConversation.isPending,
   };

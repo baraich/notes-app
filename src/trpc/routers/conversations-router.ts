@@ -3,6 +3,21 @@ import { createTRPCRouter, protectedProcedure } from "../init";
 import z from "zod";
 
 export const conversationsRouter = createTRPCRouter({
+  rename: protectedProcedure
+    .input(
+      z.object({ name: z.string().min(1), id: z.string().min(1) })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return prismaClient.conversations.update({
+        where: {
+          userId: ctx.auth.user.id,
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+        },
+      });
+    }),
   getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -19,6 +34,9 @@ export const conversationsRouter = createTRPCRouter({
         {
           where: {
             userId: ctx.auth.user.id,
+          },
+          orderBy: {
+            updatedAt: "desc",
           },
         }
       );
