@@ -11,7 +11,6 @@ import {
   MapToolInput,
   MapToolOutput,
 } from "@/modules/tools/interface";
-import { Button } from "@/components/ui/button";
 
 interface MapDisplayProps {
   input: MapToolInput;
@@ -21,9 +20,9 @@ interface MapDisplayProps {
 export default function MapDisplay({ output }: MapDisplayProps) {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [mapStyle, setMapStyle] = useState<
-    "dark" | "positron" | "liberty"
-  >("dark");
+  // const [mapStyle, setMapStyle] = useState<
+  //   "dark" | "positron" | "liberty"
+  // >("dark");
 
   const fitBounds = () => {
     if (!mapRef.current || output.points.length < 2) return;
