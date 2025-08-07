@@ -26,6 +26,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { conversationsRouter } from "@/trpc/routers/conversations-router";
 import { toast } from "sonner";
+import { Loader2Icon } from "lucide-react";
 
 interface Props {
   open: boolean;
@@ -75,6 +76,9 @@ export default function RenameConversationDialog({
           id: "rename-conversation",
         });
       },
+      onSettled() {
+        onOpenChange(false);
+      },
     })
   );
 
@@ -83,7 +87,6 @@ export default function RenameConversationDialog({
       id: conversationId,
       name: values.name,
     });
-    onOpenChange(false);
   }
 
   return (
@@ -123,7 +126,11 @@ export default function RenameConversationDialog({
                 </Button>
               </DialogClose>
               <Button type="submit" variant={"normal"}>
-                Rename
+                {renameMutation.isPending ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <span>Rename</span>
+                )}
               </Button>
             </DialogFooter>
           </form>
