@@ -54,7 +54,7 @@ export default function SignIn() {
       if (!!global) {
         global.window.location.pathname = "/";
       }
-    }
+    },
   );
 
   return (
@@ -90,9 +90,7 @@ export default function SignIn() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center">
-                  <FormLabel className="text-zinc-200">
-                    Password
-                  </FormLabel>
+                  <FormLabel className="text-zinc-200">Password</FormLabel>
                   {/* <Link
                     href="/forgot-password"
                     className="ml-auto inline-block text-sm underline"
@@ -112,11 +110,7 @@ export default function SignIn() {
               </FormItem>
             )}
           />
-          <Button
-            disabled={isPending}
-            type="submit"
-            variant={"normal"}
-          >
+          <Button disabled={isPending} type="submit" variant={"normal"}>
             {isPending ? (
               <Loader2Icon className="animate-spin" />
             ) : (

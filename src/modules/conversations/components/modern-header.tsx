@@ -50,9 +50,7 @@ export default function ModernHeader({
               </h1>
               <p className="text-xs text-gray-500">
                 Created at{" "}
-                {createdAt
-                  ? new Date(createdAt).toLocaleDateString()
-                  : "..."}
+                {createdAt ? new Date(createdAt).toLocaleDateString() : "..."}
               </p>
             </div>
           </div>
@@ -64,9 +62,7 @@ export default function ModernHeader({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem
-                  onSelect={() => setRenameDialogOpen(true)}
-                >
+                <DropdownMenuItem onSelect={() => setRenameDialogOpen(true)}>
                   Rename
                 </DropdownMenuItem>
                 <DropdownMenuItem>Delete</DropdownMenuItem>

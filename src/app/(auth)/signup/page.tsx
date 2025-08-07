@@ -59,7 +59,7 @@ export default function SignUp() {
       if (!!global) {
         global.window.location.pathname = "/";
       }
-    }
+    },
   );
 
   return (
@@ -77,9 +77,7 @@ export default function SignUp() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-zinc-200">
-                  Full Name
-                </FormLabel>
+                <FormLabel className="text-zinc-200">Full Name</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="John Doe"
@@ -113,9 +111,7 @@ export default function SignUp() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-zinc-200">
-                  Password
-                </FormLabel>
+                <FormLabel className="text-zinc-200">Password</FormLabel>
                 <FormControl>
                   <Input
                     type="password"
@@ -128,11 +124,7 @@ export default function SignUp() {
               </FormItem>
             )}
           />
-          <Button
-            disabled={isPending}
-            type="submit"
-            variant={"normal"}
-          >
+          <Button disabled={isPending} type="submit" variant={"normal"}>
             {isPending ? (
               <Loader2Icon className="animate-spin" />
             ) : (

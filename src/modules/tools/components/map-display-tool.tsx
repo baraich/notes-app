@@ -1,16 +1,9 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Map, Marker } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
-import {
-  MapToolInput,
-  MapToolOutput,
-} from "@/modules/tools/interface";
+import { MapToolInput, MapToolOutput } from "@/modules/tools/interface";
 
 interface MapDisplayProps {
   input: MapToolInput;
@@ -28,9 +21,7 @@ export default function MapDisplay({ output }: MapDisplayProps) {
     if (!mapRef.current || output.points.length < 2) return;
 
     const bounds = new maplibregl.LngLatBounds();
-    output.points.forEach((point) =>
-      bounds.extend([point.lng, point.lat])
-    );
+    output.points.forEach((point) => bounds.extend([point.lng, point.lat]));
 
     mapRef.current.fitBounds(bounds, {
       padding: 40,
@@ -49,15 +40,14 @@ export default function MapDisplay({ output }: MapDisplayProps) {
       <Alert variant={"destructive"}>
         <AlertTitle>Something went wrong!</AlertTitle>
         <AlertDescription>
-          Unable to create a map preview, missing required details
-          about the location.
+          Unable to create a map preview, missing required details about the
+          location.
         </AlertDescription>
       </Alert>
     );
   }
 
-  const center =
-    output.points.find((p) => p.is_main) || output.points[0];
+  const center = output.points.find((p) => p.is_main) || output.points[0];
 
   return (
     <div className="w-full h-64 bg-zinc-800 rounded-lg flex flex-col items-center justify-center relative overflow-hidden border border-zinc-800">

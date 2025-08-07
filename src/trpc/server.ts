@@ -14,5 +14,5 @@ export const trpc = createTRPCOptionsProxy({
 });
 
 export const caller = appRouter.createCaller(async () =>
-  createTRPCContext(await headers())
+  createTRPCContext(await headers()),
 );

@@ -72,10 +72,8 @@ type ToolOutputMap = {
   search: SearchToolOutput;
 };
 
-export type ToolInput<ToolName extends ValidTool> =
-  ToolInputMap[ToolName];
-export type ToolOutput<ToolName extends ValidTool> =
-  ToolOutputMap[ToolName];
+export type ToolInput<ToolName extends ValidTool> = ToolInputMap[ToolName];
+export type ToolOutput<ToolName extends ValidTool> = ToolOutputMap[ToolName];
 
 export type ToolCall<ToolName extends ValidTool> = {
   type: "tool-result";

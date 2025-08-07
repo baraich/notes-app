@@ -21,7 +21,7 @@ export default function ShimmerMessage() {
   useEffect(function () {
     const intervalId = setInterval(function () {
       setTextIdx((idx) =>
-        idx === shimmerTextChoices.length - 1 ? 0 : idx + 1
+        idx === shimmerTextChoices.length - 1 ? 0 : idx + 1,
       );
     }, 3000);
     return () => clearInterval(intervalId);

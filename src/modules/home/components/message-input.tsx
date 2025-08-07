@@ -2,21 +2,23 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { SendIcon } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
+import Link from "next/link";
+import { useState } from "react";
 
 interface Props {
-  value: string;
   onSubmit: (value: string) => void;
   disabled?: boolean;
-  setValue: Dispatch<SetStateAction<string>>;
 }
 
-export default function MessageInput({
-  value,
-  setValue,
-  disabled,
-  onSubmit,
-}: Props) {
+export default function MessageInput({ disabled, onSubmit }: Props) {
+  const [value, setValue] = useState("");
+
+  const handleSubmit = () => {
+    if (disabled || !value.trim()) return;
+    onSubmit(value);
+    setValue("");
+  };
+
   return (
     <div className="w-full">
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-2 flex items-center shadow-sm">
@@ -27,24 +29,28 @@ export default function MessageInput({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={(e) => {
-            if (disabled) return;
             if (e.key === "Enter" && e.metaKey) {
-              onSubmit(value);
+              e.preventDefault();
+              handleSubmit();
             }
           }}
         />
         <Button
           size="icon"
-          disabled={disabled}
-          onClick={() => {
-            if (disabled) return;
-            onSubmit(value);
-          }}
+          disabled={disabled || !value.trim()}
+          onClick={handleSubmit}
           className="text-white bg-zinc-800 hover:bg-zinc-700 ml-2"
         >
           <SendIcon />
         </Button>
       </div>
+      <p className="text-xs text-zinc-500 text-center mt-2">
+        Your conversations are processed by AI. Please review our{" "}
+        <Link href="/privacy-and-terms" className="underline">
+          Privacy & Terms
+        </Link>
+        .
+      </p>
     </div>
   );
 }

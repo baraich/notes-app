@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 
 const AuthImages = dynamic(
   async () => import("@/modules/auth/components/auth-images"),
-  { ssr: false }
+  { ssr: false },
 );
 
 export default function AuthImagesContainer() {

@@ -41,9 +41,9 @@ export default function SearchTool({ input, output }: Props) {
                 <div>
                   <span className="text-zinc-400 text-xs">
                     {"₹"}
-                    {(
-                      Math.ceil(getActualPrice(totalCost) * 100) / 100
-                    ).toFixed(2)}
+                    {(Math.ceil(getActualPrice(totalCost) * 100) / 100).toFixed(
+                      2,
+                    )}
                   </span>
                 </div>
               )}

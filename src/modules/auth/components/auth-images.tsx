@@ -4,12 +4,9 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const images = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(
-  (i) => `${i}.jpeg`
-);
+const images = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => `${i}.jpeg`);
 
-const getRandomImageIndex = () =>
-  Math.floor(Math.random() * images.length);
+const getRandomImageIndex = () => Math.floor(Math.random() * images.length);
 
 export default function AuthImages() {
   const pathname = usePathname();
@@ -24,7 +21,7 @@ export default function AuthImages() {
       }, 10000);
       return () => clearInterval(intervalId);
     },
-    [pathname]
+    [pathname],
   );
 
   return (

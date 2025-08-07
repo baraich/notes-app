@@ -51,7 +51,7 @@ export default function AssistantMessage({
     function () {
       updateContent();
     },
-    [content]
+    [content],
   );
 
   return (
@@ -59,8 +59,7 @@ export default function AssistantMessage({
       <div className="flex items-start gap-3">
         <div className="flex flex-col gap-2">
           {toolCalls?.map((tool, idx) => {
-            const Tool =
-              beforeTools[tool.name as keyof typeof beforeTools];
+            const Tool = beforeTools[tool.name as keyof typeof beforeTools];
             if (!Tool) {
               return null;
             }
@@ -85,8 +84,7 @@ export default function AssistantMessage({
             </>
           )}
           {toolCalls?.map((tool, idx) => {
-            const Tool =
-              afterTools[tool.name as keyof typeof afterTools];
+            const Tool = afterTools[tool.name as keyof typeof afterTools];
             if (!Tool) {
               return null;
             }

@@ -1,11 +1,7 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ToolCall } from "@/modules/tools/interface";
 import { Message } from "@/generated/prisma";
@@ -16,11 +12,7 @@ interface Props {
 
 type LocalMessage = Omit<
   Message,
-  | "createdAt"
-  | "updatedAt"
-  | "totalCost"
-  | "conversationsId"
-  | "toolCalls"
+  "createdAt" | "updatedAt" | "totalCost" | "conversationsId" | "toolCalls"
 > & {
   // eslint-disable-next-line
   toolCalls: ToolCall<any>[];
@@ -29,13 +21,12 @@ type LocalMessage = Omit<
 export default function useConversation({ conversationId }: Props) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const [isMessageStreamPending, setIsMessageStreamPending] =
-    useState(false);
+  const [isMessageStreamPending, setIsMessageStreamPending] = useState(false);
 
   const userConversation = useQuery(
     trpc.conversations.listConversationWithMessages.queryOptions({
       id: conversationId,
-    })
+    }),
   );
 
   const [messages, setMessages] = useState<LocalMessage[]>([]);
@@ -45,11 +36,11 @@ export default function useConversation({ conversationId }: Props) {
     (updater: (message: LocalMessage) => LocalMessage) => {
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === "streaming-assistant-response" ? updater(m) : m
-        )
+          m.id === "streaming-assistant-response" ? updater(m) : m,
+        ),
       );
     },
-    []
+    [],
   );
 
   const createMessage = useMutation(
@@ -106,38 +97,31 @@ export default function useConversation({ conversationId }: Props) {
       },
       onSettled: () => {
         queryClient.invalidateQueries(
-          trpc.conversations.listConversationWithMessages.queryOptions(
-            {
-              id: conversationId,
-            }
-          )
+          trpc.conversations.listConversationWithMessages.queryOptions({
+            id: conversationId,
+          }),
         );
       },
       throwOnError: false,
       onError() {
         setIsMessageStreamPending(false);
       },
-    })
+    }),
   );
 
   useEffect(() => {
     if (!userConversation.data) return;
     setMessages(
       userConversation.data.Message.map((dbMessage) => {
-        const {
-          createdAt,
-          updatedAt,
-          totalCost,
-          conversationsId,
-          ...message
-        } = dbMessage;
+        // eslint-disable-next-line
+        const { conversationsId, ...message } = dbMessage;
         return {
           ...message,
           toolCalls: message.toolCalls
             ? JSON.parse(message.toolCalls as string)
             : [],
         };
-      })
+      }),
     );
   }, [userConversation.data]);
 
@@ -173,11 +157,11 @@ export default function useConversation({ conversationId }: Props) {
         messages: messages.slice(-4),
       });
     },
-    [conversationId, createMessage, messages]
+    [conversationId, createMessage],
   );
 
   const hasPendingMessages = messages.find(
-    (message) => message.status === "PENDING"
+    (message) => message.status === "PENDING",
   );
 
   // Fixed effect with proper dependencies and validation
@@ -195,7 +179,7 @@ export default function useConversation({ conversationId }: Props) {
     }
 
     handleMessage(firstMessage.content, firstMessage.id);
-  }, [userConversation.data]);
+  }, [userConversation.data, handleMessage]);
 
   return {
     userConversation,

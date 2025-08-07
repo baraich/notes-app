@@ -5,14 +5,12 @@ import { useTRPC } from "@/trpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Lightbulb, Book, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "sonner";
 
 export default function EmptyConversations() {
   const trpc = useTRPC();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [value, setValue] = useState<string>("");
   const suggestions = [
     {
       icon: <Lightbulb className="h-6 w-6 text-yellow-400" />,
@@ -40,7 +38,7 @@ export default function EmptyConversations() {
       },
       onSuccess(data) {
         queryClient.invalidateQueries(
-          trpc.conversations.listUserConversations.queryOptions()
+          trpc.conversations.listUserConversations.queryOptions(),
         );
         router.push(makeConversationsLink(data.id));
         toast.success("Conversation created!", {
@@ -52,7 +50,7 @@ export default function EmptyConversations() {
           id: "create-conversation",
         });
       },
-    })
+    }),
   );
   const handleSubmit = async (value: string) => {
     createConversationWithMessageMutation.mutate({
@@ -87,20 +85,14 @@ export default function EmptyConversations() {
                   <h3 className="text-lg font-semibold text-white">
                     {suggestion.title}
                   </h3>
-                  <p className="text-zinc-400 mt-1">
-                    {suggestion.description}
-                  </p>
+                  <p className="text-zinc-400 mt-1">{suggestion.description}</p>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="mt-4 w-full">
-            <MessageInput
-              value={value}
-              setValue={setValue}
-              onSubmit={handleSubmit}
-            />
+            <MessageInput onSubmit={handleSubmit} />
           </div>
         </div>
       </main>
