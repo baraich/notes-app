@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Lightbulb, Book, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function EmptyConversations() {
   const trpc = useTRPC();
@@ -32,11 +33,24 @@ export default function EmptyConversations() {
 
   const createConversationWithMessageMutation = useMutation(
     trpc.conversations.create.mutationOptions({
+      onMutate() {
+        toast.loading("Creating a new conversation", {
+          id: "create-conversation",
+        });
+      },
       onSuccess(data) {
         queryClient.invalidateQueries(
           trpc.conversations.listUserConversations.queryOptions()
         );
         router.push(makeConversationsLink(data.id));
+        toast.success("Conversation created!", {
+          id: "create-conversation",
+        });
+      },
+      onError() {
+        toast.error("Failed to create a new conversation.", {
+          id: "create-conversation",
+        });
       },
     })
   );

@@ -3,11 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import MessageInput from "@/modules/home/components/message-input";
-import { MoreVertical, SparklesIcon } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import UserMessage from "@/modules/messages/components/user-message";
 import AssistantMessage from "@/modules/messages/components/assistant-message";
 import EmptyConversations from "./empty-conversation";
-import ComingSoonDialog from "@/components/coming-soon-dialog";
 import useConversation from "../hooks/use-conversation";
 import {
   DropdownMenu,
@@ -15,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import ShimmerMessage from "@/modules/messages/components/shimmer-message";
 
 interface Props {
   conversationId: string;
@@ -31,6 +31,7 @@ export default function ConversationListing({
     handleMessage,
     hasPendingMessages,
     isPending,
+    isMessageStreamPending,
   } = useConversation({
     conversationId,
   });
@@ -123,6 +124,8 @@ export default function ConversationListing({
                 )}
               </div>
             ))}
+
+          {isMessageStreamPending && <ShimmerMessage />}
         </div>
       </div>
 
