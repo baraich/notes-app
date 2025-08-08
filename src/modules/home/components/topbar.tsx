@@ -12,7 +12,7 @@ export default function Topbar() {
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
 
   return (
-    <header className="flex w-full items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-3">
+    <header className="flex w-full items-center justify-between border-b border-zinc-800 bg-zinc-900 px-3 py-3 pr-6">
       <div className="flex items-center gap-2">
         <Button
           size="icon"

@@ -12,6 +12,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^2.0.0",
     "@ai-sdk/react": "^2.0.0",
+    "@editorjs/editorjs": "^2.30.8",
     "@hookform/resolvers": "^5.2.0",
     "@prisma/client": "^6.12.0",
     "@prisma/nextjs-monorepo-workaround-plugin": "^6.13.0",

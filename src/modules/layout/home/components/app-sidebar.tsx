@@ -73,6 +73,25 @@ export default function AppSidebar() {
       <SidebarContent className="bg-zinc-900">
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center justify-between text-zinc-400">
+            <span className="pl-0.5">Documents</span>
+            <Button
+              size={"icon"}
+              variant={"ghost"}
+              className="h-7 w-7"
+            >
+              <PlusIcon className="h-3.5! w-3.5!" />
+            </Button>
+          </SidebarGroupLabel>
+          <SidebarMenu className="gap-0">
+            <SidebarMenuItem>
+              <SidebarMenuButton className={sidebarMenuButtonClassname}>
+                No documents yet!
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel className="flex items-center justify-between text-zinc-400">
             <span className="pl-0.5">Conversations</span>
             <Button
               onClick={() => createConversationMutation.mutate()}

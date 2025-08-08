@@ -156,3 +156,16 @@ model Message {
 
   conversation Conversations @relation(fields: [conversationsId], references: [id], onDelete: Cascade)
 }
+
+model Document {
+  id      String  @id @default(cuid())
+  name    String
+  content String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parentId     String?
+  parent       Document?  @relation("DocumentParent", fields: [parentId], references: [id])
+  subDocuments Document[] @relation("DocumentParent")
+}
