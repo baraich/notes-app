@@ -157,7 +157,7 @@ export default function useConversation({ conversationId }: Props) {
         messages: messages.slice(-4),
       });
     },
-    [conversationId, createMessage],
+    [conversationId, createMessage, messages],
   );
 
   const hasPendingMessages = messages.find(

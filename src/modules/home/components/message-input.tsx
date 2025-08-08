@@ -21,9 +21,9 @@ export default function MessageInput({ disabled, onSubmit }: Props) {
 
   return (
     <div className="w-full">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-2 flex items-center shadow-sm">
+      <div className="flex items-center rounded-xl border border-zinc-800 bg-zinc-900 p-2 shadow-sm">
         <Textarea
-          className="flex-1 bg-transparent border-0 text-white placeholder:text-zinc-500 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none min-h-0 shadow-none"
+          className="min-h-0 flex-1 resize-none border-0 bg-transparent text-white shadow-none placeholder:text-zinc-500 focus-visible:ring-0 focus-visible:ring-offset-0"
           placeholder="Ask me anything..."
           rows={1}
           value={value}
@@ -39,12 +39,12 @@ export default function MessageInput({ disabled, onSubmit }: Props) {
           size="icon"
           disabled={disabled || !value.trim()}
           onClick={handleSubmit}
-          className="text-white bg-zinc-800 hover:bg-zinc-700 ml-2"
+          className="ml-2 bg-zinc-800 text-white hover:bg-zinc-700"
         >
           <SendIcon />
         </Button>
       </div>
-      <p className="text-xs text-zinc-500 text-center mt-2">
+      <p className="mt-2 text-center text-xs text-zinc-500">
         Your conversations are processed by AI. Please review our{" "}
         <Link href="/privacy-and-terms" className="underline">
           Privacy & Terms

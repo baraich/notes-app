@@ -31,8 +31,8 @@ export default function ConversationPage({ params }: Props) {
 
   if (isPending) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-zinc-950">
-        <Loader2Icon className="text-zinc-400 animate-spin" />
+      <div className="flex h-full w-full items-center justify-center bg-zinc-950">
+        <Loader2Icon className="animate-spin text-zinc-400" />
       </div>
     );
   }
@@ -46,7 +46,7 @@ export default function ConversationPage({ params }: Props) {
   }
 
   return (
-    <div className="w-full h-full bg-zinc-950 flex flex-col">
+    <div className="flex h-full w-full flex-col bg-zinc-950">
       <ConversationListing
         conversationId={conversationId}
         userConversation={userConversation}
@@ -54,8 +54,8 @@ export default function ConversationPage({ params }: Props) {
         messageStartRef={messageStartRef}
         isMessageStreamPending={isMessageStreamPending}
       />
-      <div className="sticky backdrop-blur-md bottom-0 px-6 pb-4">
-        <div className="max-w-4xl mx-auto">
+      <div className="sticky bottom-0 px-6 pb-4 backdrop-blur-md">
+        <div className="mx-auto max-w-4xl">
           <MessageInput
             onSubmit={handleMessage}
             disabled={hasPendingMessages}

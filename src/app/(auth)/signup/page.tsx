@@ -81,7 +81,7 @@ export default function SignUp() {
                 <FormControl>
                   <Input
                     placeholder="John Doe"
-                    className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-700"
+                    className="border-zinc-800 bg-zinc-900 text-white placeholder:text-zinc-500 focus:border-zinc-700"
                     {...field}
                   />
                 </FormControl>
@@ -98,7 +98,7 @@ export default function SignUp() {
                 <FormControl>
                   <Input
                     placeholder="john.doe@example.com"
-                    className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-700"
+                    className="border-zinc-800 bg-zinc-900 text-white placeholder:text-zinc-500 focus:border-zinc-700"
                     {...field}
                   />
                 </FormControl>
@@ -116,7 +116,7 @@ export default function SignUp() {
                   <Input
                     type="password"
                     placeholder="********"
-                    className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-700"
+                    className="border-zinc-800 bg-zinc-900 text-white placeholder:text-zinc-500 focus:border-zinc-700"
                     {...field}
                   />
                 </FormControl>
@@ -137,7 +137,7 @@ export default function SignUp() {
         Already have an account?{" "}
         <Link
           href="/signin"
-          className="underline text-zinc-300 hover:text-white"
+          className="text-zinc-300 underline hover:text-white"
         >
           Sign in
         </Link>

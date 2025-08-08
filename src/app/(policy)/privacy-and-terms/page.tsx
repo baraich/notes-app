@@ -2,10 +2,10 @@ import React from "react";
 
 const PrivacyAndTermsPage = () => {
   return (
-    <div className="bg-zinc-950 text-white font-sans leading-relaxed min-h-screen">
-      <div className="max-w-4xl mx-auto px-6 py-12">
+    <div className="min-h-screen bg-zinc-950 font-sans leading-relaxed text-white">
+      <div className="mx-auto max-w-4xl px-6 py-12">
         <div
-          className="bg-red-900 border-l-4 border-red-500 text-red-200 p-4 mb-8"
+          className="mb-8 border-l-4 border-red-500 bg-red-900 p-4 text-red-200"
           role="alert"
         >
           <p className="font-bold">Disclaimer</p>
@@ -17,8 +17,8 @@ const PrivacyAndTermsPage = () => {
           </p>
         </div>
 
-        <h1 className="text-4xl font-bold mb-4 text-white">Privacy Policy</h1>
-        <p className="text-sm text-zinc-400 mb-8">
+        <h1 className="mb-4 text-4xl font-bold text-white">Privacy Policy</h1>
+        <p className="mb-8 text-sm text-zinc-400">
           Last Updated: August 1, 2025
         </p>
 
@@ -29,10 +29,10 @@ const PrivacyAndTermsPage = () => {
           it, and your rights in relation to it.
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           1. Information We Collect
         </h2>
-        <ul className="list-disc list-inside space-y-2 mb-6 text-zinc-200">
+        <ul className="mb-6 list-inside list-disc space-y-2 text-zinc-200">
           <li>
             <strong>Account Information:</strong> When you sign up, we collect
             your name, university-provided email address, and hashed password.
@@ -64,13 +64,13 @@ const PrivacyAndTermsPage = () => {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           2. How We Use Your Information
         </h2>
         <p className="mb-6 text-zinc-200">
           We use your information for the following purposes:
         </p>
-        <ul className="list-disc list-inside space-y-2 mb-6 text-zinc-200">
+        <ul className="mb-6 list-inside list-disc space-y-2 text-zinc-200">
           <li>To provide, operate, and maintain the Service.</li>
           <li>
             To process and respond to your AI Prompts through our AI feature.
@@ -89,14 +89,14 @@ const PrivacyAndTermsPage = () => {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           3. Data Sharing and Disclosure
         </h2>
         <p className="mb-6 text-zinc-200">
           We do not sell your personal data. We only share it with the following
           parties for the purposes described below:
         </p>
-        <ul className="list-disc list-inside space-y-2 mb-6 text-zinc-200">
+        <ul className="mb-6 list-inside list-disc space-y-2 text-zinc-200">
           <li>
             <strong>OpenAI, L.L.C.:</strong> To power our AI chat feature, we
             send your AI Prompts to OpenAI&apos;s API. In accordance with
@@ -120,7 +120,7 @@ const PrivacyAndTermsPage = () => {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           4. Student Data and Intellectual Property
         </h2>
         <p className="mb-6 text-zinc-200">
@@ -135,12 +135,12 @@ const PrivacyAndTermsPage = () => {
 
         <hr className="my-12 border-zinc-800" />
 
-        <h1 className="text-4xl font-bold mb-4 text-white">Terms of Service</h1>
-        <p className="text-sm text-zinc-400 mb-8">
+        <h1 className="mb-4 text-4xl font-bold text-white">Terms of Service</h1>
+        <p className="mb-8 text-sm text-zinc-400">
           Last Updated: August 1, 2025
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           1. Acceptance of Terms
         </h2>
         <p className="mb-6 text-zinc-200">
@@ -148,7 +148,7 @@ const PrivacyAndTermsPage = () => {
           If you do not agree, do not use the Service.
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           2. Acceptable Use and Academic Integrity
         </h2>
         <p className="mb-6 text-zinc-200">
@@ -156,7 +156,7 @@ const PrivacyAndTermsPage = () => {
           any laws. Crucially, you agree to uphold the principles of academic
           integrity.
         </p>
-        <ul className="list-disc list-inside space-y-2 mb-6 text-zinc-200">
+        <ul className="mb-6 list-inside list-disc space-y-2 text-zinc-200">
           <li>
             The AI feature is a tool to assist your learning and research. It is
             not a tool for cheating or plagiarism.
@@ -172,10 +172,10 @@ const PrivacyAndTermsPage = () => {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           3. AI Feature Usage
         </h2>
-        <ul className="list-disc list-inside space-y-2 mb-6 text-zinc-200">
+        <ul className="mb-6 list-inside list-disc space-y-2 text-zinc-200">
           <li>
             <strong>Disclaimer of Accuracy:</strong> The content generated by
             the AI is for informational purposes only. It may contain errors,
@@ -189,7 +189,7 @@ const PrivacyAndTermsPage = () => {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           4. Intellectual Property
         </h2>
         <p className="mb-6 text-zinc-200">
@@ -199,7 +199,7 @@ const PrivacyAndTermsPage = () => {
           Service.
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           5. Termination
         </h2>
         <p className="mb-6 text-zinc-200">
@@ -208,7 +208,7 @@ const PrivacyAndTermsPage = () => {
           Academic Integrity policy. You can delete your account at any time.
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           6. Disclaimer of Warranties
         </h2>
         <p className="mb-6 text-zinc-200">
@@ -217,7 +217,7 @@ const PrivacyAndTermsPage = () => {
           or error-free.
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-white">
+        <h2 className="mt-8 mb-4 text-2xl font-semibold text-white">
           7. Contact Us
         </h2>
         <p className="mb-6 text-zinc-200">

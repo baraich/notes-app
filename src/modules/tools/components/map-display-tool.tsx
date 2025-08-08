@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Map, Marker } from "@vis.gl/react-maplibre";
+import { Map as MapLibre, Marker } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
@@ -50,8 +50,8 @@ export default function MapDisplay({ output }: MapDisplayProps) {
   const center = output.points.find((p) => p.is_main) || output.points[0];
 
   return (
-    <div className="w-full h-64 bg-zinc-800 rounded-lg flex flex-col items-center justify-center relative overflow-hidden border border-zinc-800">
-      <Map
+    <div className="relative flex h-64 w-full flex-col items-center justify-center overflow-hidden rounded-lg border border-zinc-800 bg-zinc-800">
+      <MapLibre
         reuseMaps
         onLoad={() => {
           setMapLoaded(true);
@@ -86,7 +86,7 @@ export default function MapDisplay({ output }: MapDisplayProps) {
               ></Marker>
             );
           })}
-      </Map>
+      </MapLibre>
     </div>
   );
 }

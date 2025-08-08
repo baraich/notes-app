@@ -10,7 +10,7 @@ export default function MainLayout({ children }: Props) {
     <SidebarProvider>
       <main className="flex h-screen w-full bg-black">
         <AppSidebar />
-        <div className="relative flex-1 flex flex-col h-full">
+        <div className="relative flex h-full flex-1 flex-col">
           <div className="flex-1">{children}</div>
         </div>
       </main>

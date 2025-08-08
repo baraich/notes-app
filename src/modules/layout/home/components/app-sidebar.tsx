@@ -60,7 +60,7 @@ export default function AppSidebar() {
   );
 
   return (
-    <Sidebar className="px-2 pt-1 bg-zinc-900 border-r border-zinc-800 text-white">
+    <Sidebar className="border-r border-zinc-800 bg-zinc-900 px-2 pt-1 text-white">
       <SidebarHeader className="bg-zinc-900">
         <Image
           className="mt-2"
@@ -72,7 +72,7 @@ export default function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className="bg-zinc-900">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-zinc-400 flex items-center justify-between">
+          <SidebarGroupLabel className="flex items-center justify-between text-zinc-400">
             <span className="pl-0.5">Conversations</span>
             <Button
               onClick={() => createConversationMutation.mutate()}
@@ -127,7 +127,7 @@ export default function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="bg-zinc-900 pt-1 border-t border-zinc-800">
+      <SidebarFooter className="border-t border-zinc-800 bg-zinc-900 pt-1">
         <Button
           onClick={() =>
             authClient.signOut().then(({ error }) =>

@@ -144,6 +144,6 @@
     @apply px-2! py-1!;
   }
   .maplibregl-map {
-    @apply min-h-64! h-64! max-h-64!;
+    @apply h-64! max-h-64! min-h-64!;
   }
 }

@@ -41,7 +41,7 @@ export default function ConversationListing({
   isMessageStreamPending,
 }: Props) {
   return (
-    <div className="w-full h-full bg-zinc-950 flex flex-col">
+    <div className="flex h-full w-full flex-col bg-zinc-950">
       {/* Modern Header */}
       <ModernHeader
         conversationId={conversationId}
@@ -50,8 +50,8 @@ export default function ConversationListing({
       />
 
       {/* Messages Container */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6 max-w-screen">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-screen flex-1 space-y-6 overflow-y-auto px-6 py-4">
+        <div className="mx-auto max-w-4xl space-y-6">
           {messages
             .filter(
               (message) =>
