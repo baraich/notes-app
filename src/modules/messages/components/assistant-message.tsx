@@ -51,7 +51,7 @@ export default function AssistantMessage({
     function () {
       updateContent();
     },
-    [content]
+    [content],
   );
 
   return (
@@ -59,8 +59,7 @@ export default function AssistantMessage({
       <div className="flex items-start gap-3">
         <div className="flex flex-col gap-2">
           {toolCalls?.map((tool, idx) => {
-            const Tool =
-              beforeTools[tool.name as keyof typeof beforeTools];
+            const Tool = beforeTools[tool.name as keyof typeof beforeTools];
             if (!Tool) {
               return null;
             }
@@ -73,9 +72,9 @@ export default function AssistantMessage({
           {cleanHtmlContent != "" && (
             <>
               <div ref={messageStartRef}></div>
-              <div className="bg-zinc-900 border border-zinc-800 text-white px-4 py-3 rounded-2xl rounded-bl-md shadow-lg">
+              <div className="rounded-2xl rounded-bl-md border border-zinc-800 bg-zinc-900 px-4 py-3 text-white shadow-lg">
                 <div
-                  className="prose prose-invert text-sm max-w-none w-full prose-img:my-4 prose-pre:my-4 prose-table:my-4 prose-hr:my-4 prose-th:border prose-td:border prose-table:border-collapse prose-th:p-2! prose-td:p-2!"
+                  className="prose prose-invert prose-img:my-4 prose-pre:my-4 prose-table:my-4 prose-hr:my-4 prose-th:border prose-td:border prose-table:border-collapse prose-th:p-2! prose-td:p-2! w-full max-w-none text-sm"
                   suppressHydrationWarning
                   dangerouslySetInnerHTML={{
                     __html: cleanHtmlContent,
@@ -85,8 +84,7 @@ export default function AssistantMessage({
             </>
           )}
           {toolCalls?.map((tool, idx) => {
-            const Tool =
-              afterTools[tool.name as keyof typeof afterTools];
+            const Tool = afterTools[tool.name as keyof typeof afterTools];
             if (!Tool) {
               return null;
             }

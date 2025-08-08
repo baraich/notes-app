@@ -54,7 +54,7 @@ export default function SignIn() {
       if (!!global) {
         global.window.location.pathname = "/";
       }
-    }
+    },
   );
 
   return (
@@ -76,7 +76,7 @@ export default function SignIn() {
                 <FormControl>
                   <Input
                     placeholder="john.doe@example.com"
-                    className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-700"
+                    className="border-zinc-800 bg-zinc-900 text-white placeholder:text-zinc-500 focus:border-zinc-700"
                     {...field}
                   />
                 </FormControl>
@@ -90,9 +90,7 @@ export default function SignIn() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center">
-                  <FormLabel className="text-zinc-200">
-                    Password
-                  </FormLabel>
+                  <FormLabel className="text-zinc-200">Password</FormLabel>
                   {/* <Link
                     href="/forgot-password"
                     className="ml-auto inline-block text-sm underline"
@@ -104,7 +102,7 @@ export default function SignIn() {
                   <Input
                     type="password"
                     placeholder="********"
-                    className="bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-zinc-700"
+                    className="border-zinc-800 bg-zinc-900 text-white placeholder:text-zinc-500 focus:border-zinc-700"
                     {...field}
                   />
                 </FormControl>
@@ -112,11 +110,7 @@ export default function SignIn() {
               </FormItem>
             )}
           />
-          <Button
-            disabled={isPending}
-            type="submit"
-            variant={"normal"}
-          >
+          <Button disabled={isPending} type="submit" variant={"normal"}>
             {isPending ? (
               <Loader2Icon className="animate-spin" />
             ) : (
@@ -129,7 +123,7 @@ export default function SignIn() {
         Don&apos;t have an account?{" "}
         <Link
           href="/signup"
-          className="underline text-zinc-300 hover:text-white"
+          className="text-zinc-300 underline hover:text-white"
         >
           Sign up
         </Link>

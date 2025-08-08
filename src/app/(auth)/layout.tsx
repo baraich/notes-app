@@ -6,13 +6,13 @@ export default async function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-full min-h-screen h-full md:grid md:grid-cols-2 lg:grid-cols-8 bg-black">
-      <div className="flex items-center justify-center py-12 mx-5 lg:col-span-3 h-full">
+    <div className="h-full min-h-screen w-full bg-black md:grid md:grid-cols-2 lg:grid-cols-8">
+      <div className="mx-5 flex h-full items-center justify-center py-12 lg:col-span-3">
         {children}
       </div>
-      <div className="hidden relative bg-zinc-900 md:flex items-center justify-center p-10 lg:col-span-5">
+      <div className="relative hidden items-center justify-center bg-zinc-900 p-10 md:flex lg:col-span-5">
         <AuthImagesContainer />
-        <div className="inset-0 absolute bg-black/50"></div>
+        <div className="absolute inset-0 bg-black/50"></div>
       </div>
     </div>
   );

@@ -15,11 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTRPC } from "@/trpc/client";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
@@ -36,7 +32,7 @@ export default function AppSidebar() {
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const { data: conversations = [], isLoading } = useQuery(
-    trpc.conversations.listUserConversations.queryOptions()
+    trpc.conversations.listUserConversations.queryOptions(),
   );
 
   const createConversationMutation = useMutation(
@@ -48,7 +44,7 @@ export default function AppSidebar() {
       },
       onSuccess(data) {
         queryClient.invalidateQueries(
-          trpc.conversations.listUserConversations.queryOptions()
+          trpc.conversations.listUserConversations.queryOptions(),
         );
         router.push(makeConversationsLink(data.id));
         toast.success("Conversation created", {
@@ -60,11 +56,11 @@ export default function AppSidebar() {
           id: "create-conversation-sidebar",
         });
       },
-    })
+    }),
   );
 
   return (
-    <Sidebar className="px-2 pt-1 bg-zinc-900 border-r border-zinc-800 text-white">
+    <Sidebar className="border-r border-zinc-800 bg-zinc-900 px-2 pt-1 text-white">
       <SidebarHeader className="bg-zinc-900">
         <Image
           className="mt-2"
@@ -76,7 +72,7 @@ export default function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className="bg-zinc-900">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-zinc-400 flex items-center justify-between">
+          <SidebarGroupLabel className="flex items-center justify-between text-zinc-400">
             <span className="pl-0.5">Conversations</span>
             <Button
               onClick={() => createConversationMutation.mutate()}
@@ -107,9 +103,7 @@ export default function AppSidebar() {
               </>
             ) : conversations.length === 0 ? (
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  className={sidebarMenuButtonClassname}
-                >
+                <SidebarMenuButton className={sidebarMenuButtonClassname}>
                   No conversation yet!
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -120,8 +114,7 @@ export default function AppSidebar() {
                     asChild
                     className={cn(
                       sidebarMenuButtonClassname,
-                      pathname.includes(link.id) &&
-                        "bg-zinc-800 text-white"
+                      pathname.includes(link.id) && "bg-zinc-800 text-white",
                     )}
                   >
                     <Link href={makeConversationsLink(link.id)}>
@@ -134,7 +127,7 @@ export default function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="bg-zinc-900 pt-1 border-t border-zinc-800">
+      <SidebarFooter className="border-t border-zinc-800 bg-zinc-900 pt-1">
         <Button
           onClick={() =>
             authClient.signOut().then(({ error }) =>
@@ -143,8 +136,8 @@ export default function AppSidebar() {
                     id: "sidebar-signout",
                   })
                 : typeof window !== "undefined"
-                ? (window.location.pathname = "/signin")
-                : null
+                  ? (window.location.pathname = "/signin")
+                  : null,
             )
           }
           size={"sm"}

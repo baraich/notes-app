@@ -4,9 +4,7 @@ import z from "zod";
 
 export const conversationsRouter = createTRPCRouter({
   rename: protectedProcedure
-    .input(
-      z.object({ name: z.string().min(1), id: z.string().min(1) })
-    )
+    .input(z.object({ name: z.string().min(1), id: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       return prismaClient.conversations.update({
         where: {
@@ -30,16 +28,14 @@ export const conversationsRouter = createTRPCRouter({
     }),
   listUserConversations: protectedProcedure.query(async ({ ctx }) => {
     try {
-      const conversations = await prismaClient.conversations.findMany(
-        {
-          where: {
-            userId: ctx.auth.user.id,
-          },
-          orderBy: {
-            updatedAt: "desc",
-          },
-        }
-      );
+      const conversations = await prismaClient.conversations.findMany({
+        where: {
+          userId: ctx.auth.user.id,
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+      });
 
       return conversations || [];
     } catch {
@@ -52,7 +48,7 @@ export const conversationsRouter = createTRPCRouter({
         .object({
           pending_message: z.string().min(1),
         })
-        .optional()
+        .optional(),
     )
     .mutation(async ({ ctx, input }) => {
       const conversation = await prismaClient.conversations.create({
@@ -80,21 +76,20 @@ export const conversationsRouter = createTRPCRouter({
   listConversationWithMessages: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const conversation =
-        await prismaClient.conversations.findUnique({
-          where: {
-            id: input.id,
-            userId: ctx.auth.user.id,
-          },
-          select: {
-            name: true,
-            labels: true,
-            createdAt: true,
-            updatedAt: true,
-            id: true,
-            Message: true,
-          },
-        });
+      const conversation = await prismaClient.conversations.findUnique({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id,
+        },
+        select: {
+          name: true,
+          labels: true,
+          createdAt: true,
+          updatedAt: true,
+          id: true,
+          Message: true,
+        },
+      });
 
       return conversation;
     }),

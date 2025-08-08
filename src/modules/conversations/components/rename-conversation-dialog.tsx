@@ -18,13 +18,11 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
-import { conversationsRouter } from "@/trpc/routers/conversations-router";
 import { toast } from "sonner";
 import { Loader2Icon } from "lucide-react";
 
@@ -60,12 +58,12 @@ export default function RenameConversationDialog({
       },
       onSuccess() {
         queryClient.invalidateQueries(
-          trpc.conversations.listUserConversations.queryOptions()
+          trpc.conversations.listUserConversations.queryOptions(),
         );
         queryClient.invalidateQueries(
-          trpc.conversations.listConversationWithMessages.queryOptions(
-            { id: conversationId }
-          )
+          trpc.conversations.listConversationWithMessages.queryOptions({
+            id: conversationId,
+          }),
         );
         toast.success("Conversation renamed!", {
           id: "rename-conversation",
@@ -79,7 +77,7 @@ export default function RenameConversationDialog({
       onSettled() {
         onOpenChange(false);
       },
-    })
+    }),
   );
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -99,10 +97,7 @@ export default function RenameConversationDialog({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
               name="name"

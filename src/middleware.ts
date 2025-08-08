@@ -12,9 +12,7 @@ export async function middleware(request: NextRequest) {
       headers: await headers(),
     });
     if (!session) {
-      return NextResponse.redirect(
-        new URL("/signin", request.nextUrl)
-      );
+      return NextResponse.redirect(new URL("/signin", request.nextUrl));
     }
   }
 

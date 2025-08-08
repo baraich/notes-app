@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { makeQueryClient } from "./query-client";
 import { useState } from "react";
 import { AppRouter } from "./routers/_app";
@@ -16,8 +13,7 @@ import {
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
 import { env } from "@/env";
-export const { TRPCProvider, useTRPC } =
-  createTRPCContext<AppRouter>();
+export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
 
 let browserQueryClient: QueryClient;
 
@@ -33,8 +29,7 @@ function getQueryClient() {
 function getUrl() {
   const base = (() => {
     if (typeof window !== "undefined") return "";
-    if (process.env.VERCEL_URL)
-      return `https://${process.env.VERCEL_URL}`;
+    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
     return env.NEXT_PUBLIC_BASE_URL;
   })();
 
@@ -42,7 +37,7 @@ function getUrl() {
 }
 
 export function TRPCReactProvider(
-  props: Readonly<{ children: React.ReactNode }>
+  props: Readonly<{ children: React.ReactNode }>,
 ) {
   const queryClient = getQueryClient();
   const [trpcClient] = useState(() =>
@@ -66,7 +61,7 @@ export function TRPCReactProvider(
           }),
         }),
       ],
-    })
+    }),
   );
 
   return (

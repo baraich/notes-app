@@ -32,7 +32,7 @@ export default function ModernHeader({
         open={renameDialogOpen}
         onOpenChange={setRenameDialogOpen}
       />
-      <div className="sticky top-0 z-10 bg-zinc-800/80 backdrop-blur-md border-b border-zinc-700 py-4 px-2">
+      <div className="sticky top-0 z-10 border-b border-zinc-700 bg-zinc-800/80 px-2 py-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <div>
@@ -50,9 +50,7 @@ export default function ModernHeader({
               </h1>
               <p className="text-xs text-gray-500">
                 Created at{" "}
-                {createdAt
-                  ? new Date(createdAt).toLocaleDateString()
-                  : "..."}
+                {createdAt ? new Date(createdAt).toLocaleDateString() : "..."}
               </p>
             </div>
           </div>
@@ -60,13 +58,11 @@ export default function ModernHeader({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size="icon" variant="ghost">
-                  <MoreVertical className="w-5 h-5" />
+                  <MoreVertical className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem
-                  onSelect={() => setRenameDialogOpen(true)}
-                >
+                <DropdownMenuItem onSelect={() => setRenameDialogOpen(true)}>
                   Rename
                 </DropdownMenuItem>
                 <DropdownMenuItem>Delete</DropdownMenuItem>

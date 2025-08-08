@@ -16,7 +16,7 @@ import { TRPCError } from "@trpc/server";
 
 function fetchLocationCoords(location: string) {
   return fetch(
-    `https://www.gps-coordinates.net/geoproxy?q=${location}&key=9416bf2c8b1d4751be6a9a9e94ea85ca&no_annotations=1&language=en`
+    `https://www.gps-coordinates.net/geoproxy?q=${location}&key=9416bf2c8b1d4751be6a9a9e94ea85ca&no_annotations=1&language=en`,
   );
 }
 
@@ -32,20 +32,18 @@ export const messagesRouter = createTRPCRouter({
             id: z.string(),
             role: z.string(),
             content: z.string(),
-          })
+          }),
         ),
-      })
+      }),
     )
     .mutation(async function* ({ input, ctx }) {
       // Validating the conversation exists and the user owns it.
-      const conversation = await prismaClient.conversations.findFirst(
-        {
-          where: {
-            id: input.conversationId,
-            userId: ctx.auth.user.id,
-          },
-        }
-      );
+      const conversation = await prismaClient.conversations.findFirst({
+        where: {
+          id: input.conversationId,
+          userId: ctx.auth.user.id,
+        },
+      });
 
       if (!conversation) {
         throw new TRPCError({
@@ -61,7 +59,7 @@ export const messagesRouter = createTRPCRouter({
         messages: [
           ...input.messages
             .filter((msg) =>
-              ["user", "assistant"].includes(msg.role.toLowerCase())
+              ["user", "assistant"].includes(msg.role.toLowerCase()),
             )
             .map((msg) => ({
               role: msg.role.toLowerCase() as "user" | "assistant",
@@ -83,12 +81,11 @@ export const messagesRouter = createTRPCRouter({
                 .number()
                 .optional()
                 .describe(
-                  "Is optional but sets the search result size limit in tokens"
+                  "Is optional but sets the search result size limit in tokens",
                 ),
             }),
             execute: async ({ query, max_tokens = 1024 }) => {
-              const endpoint =
-                "https://api.perplexity.ai/chat/completions";
+              const endpoint = "https://api.perplexity.ai/chat/completions";
               const payload = {
                 model: "sonar-pro",
                 messages: [{ role: "user", content: query }],
@@ -118,27 +115,25 @@ export const messagesRouter = createTRPCRouter({
                   location: z
                     .string()
                     .describe(
-                      "The name of the primary location or landmark. Do not include full addresses—only recognizable place names or landmarks."
+                      "The name of the primary location or landmark. Do not include full addresses—only recognizable place names or landmarks.",
                     ),
                   map_centered_here: z
                     .boolean()
                     .default(false)
                     .describe(
-                      "Set to true to center the map on this location. Only one location can be centered per map call. If multiple are marked true, the first one will be used as the center. All others will appear as nearby landmarks."
+                      "Set to true to center the map on this location. Only one location can be centered per map call. If multiple are marked true, the first one will be used as the center. All others will appear as nearby landmarks.",
                     ),
-                })
+                }),
               ),
             }),
-            execute: async ({
-              locations,
-            }): Promise<MapToolOutput> => {
+            execute: async ({ locations }): Promise<MapToolOutput> => {
               const hash = new Set();
               const rawJsonResponses = (await Promise.all(
                 locations.map((location) =>
                   fetchLocationCoords(location.location).then((res) =>
-                    res.json()
-                  )
-                )
+                    res.json(),
+                  ),
+                ),
               )) as {
                 results: {
                   formatted: string;

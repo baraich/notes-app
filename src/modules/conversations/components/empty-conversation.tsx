@@ -5,14 +5,12 @@ import { useTRPC } from "@/trpc/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Lightbulb, Book, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "sonner";
 
 export default function EmptyConversations() {
   const trpc = useTRPC();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [value, setValue] = useState<string>("");
   const suggestions = [
     {
       icon: <Lightbulb className="h-6 w-6 text-yellow-400" />,
@@ -40,7 +38,7 @@ export default function EmptyConversations() {
       },
       onSuccess(data) {
         queryClient.invalidateQueries(
-          trpc.conversations.listUserConversations.queryOptions()
+          trpc.conversations.listUserConversations.queryOptions(),
         );
         router.push(makeConversationsLink(data.id));
         toast.success("Conversation created!", {
@@ -52,7 +50,7 @@ export default function EmptyConversations() {
           id: "create-conversation",
         });
       },
-    })
+    }),
   );
   const handleSubmit = async (value: string) => {
     createConversationWithMessageMutation.mutate({
@@ -63,11 +61,11 @@ export default function EmptyConversations() {
   return (
     <div className="flex h-screen flex-col bg-zinc-950 text-white">
       <Topbar />
-      <main className="flex-grow flex flex-col items-center justify-center p-4 my-16 md:mt-0">
-        <div className="w-full h-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center">
-          <div className="w-full flex flex-col items-center justify-end">
+      <main className="my-16 flex flex-grow flex-col items-center justify-center p-4 md:mt-0">
+        <div className="mx-auto flex h-full w-full max-w-4xl flex-col items-center justify-center text-center">
+          <div className="flex w-full flex-col items-center justify-end">
             <div className="mb-12">
-              <h1 className="text-5xl font-bold tracking-tight sm:text-6xl bg-clip-text text-transparent bg-gradient-to-b from-white to-zinc-400">
+              <h1 className="bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-5xl font-bold tracking-tight text-transparent sm:text-6xl">
                 Unlock Your Ideas
               </h1>
               <p className="mt-4 text-lg text-zinc-400">
@@ -75,32 +73,26 @@ export default function EmptyConversations() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+            <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
               {suggestions.map((suggestion, index) => (
                 <div
                   key={index}
-                  className="bg-zinc-900 p-6 rounded-lg border border-zinc-800"
+                  className="rounded-lg border border-zinc-800 bg-zinc-900 p-6"
                 >
-                  <div className="flex items-center justify-center mb-4">
+                  <div className="mb-4 flex items-center justify-center">
                     {suggestion.icon}
                   </div>
                   <h3 className="text-lg font-semibold text-white">
                     {suggestion.title}
                   </h3>
-                  <p className="text-zinc-400 mt-1">
-                    {suggestion.description}
-                  </p>
+                  <p className="mt-1 text-zinc-400">{suggestion.description}</p>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="mt-4 w-full">
-            <MessageInput
-              value={value}
-              setValue={setValue}
-              onSubmit={handleSubmit}
-            />
+            <MessageInput onSubmit={handleSubmit} />
           </div>
         </div>
       </main>
