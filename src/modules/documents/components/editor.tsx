@@ -10,7 +10,7 @@ export default function Editor() {
     extensions: [
       StarterKit.configure({
         heading: {
-          levels: [2, 3, 4],
+          levels: [1, 2, 3, 4],
         },
       }),
       Highlight,
@@ -27,14 +27,16 @@ export default function Editor() {
         class: "focus:outline-none",
       },
     },
+    injectCSS: false,
   });
 
   return (
-    <div className="max-h-screen min-h-screen bg-zinc-900 px-4 py-3 text-white shadow-lg">
+    <div className="max-h-screen min-h-screen bg-zinc-900 px-4 py-3 text-white">
       <EditorContent
+        translate="no"
         editor={editor}
         spellCheck={false}
-        className="prose prose-invert prose-headings:mt-[1.5rem] prose-headings:mb-2 prose-hr:my-[1.5rem] prose-li:mb-1 prose-ol:list-decimal"
+        className="prose prose-invert prose-p:my-2 prose-h1:my-4 prose-h2:my-4 prose-h3:my-3 prose-h4:my-3 prose-h2:text-3xl prose-hr:h-0.5 prose-hr:bg-zinc-800 prose-hr:border-none prose-hr:my-6"
       />
     </div>
   );

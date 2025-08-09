@@ -42,7 +42,7 @@ export default function DocumentPage({ params }: Props) {
         createdAt={document.createdAt}
         name={document.name || undefined}
       />
-      <div className="flex-1 bg-zinc-900">
+      <div className="flex-1 bg-zinc-900 px-4 pt-6">
         <Editor />
       </div>
     </div>
