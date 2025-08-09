@@ -151,4 +151,36 @@
   ul > li {
     @apply -ml-1;
   }
+
+  /* VimExtension */
+  /* @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  [vim-active="true"] {
+    caret-color: transparent;
+  }
+  .vim-cursor {
+    width: 0px !important;
+    height: 0px !important;
+    position: relative !important;
+  }
+
+  .vim-cursor::before {
+    content: " ";
+    position: absolute;
+    top: 0.125rem !important;
+    width: 10px !important;
+    height: 1.25em !important;
+    background: #00ff00;
+    animation: blink 1s step-start infinite;
+  } */
 }

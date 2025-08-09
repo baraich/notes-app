@@ -188,6 +188,15 @@ importers:
       nextjs-monorepo-workaround-plugin:
         specifier: link:@types/@prisma/nextjs-monorepo-workaround-plugin
         version: link:@types/@prisma/nextjs-monorepo-workaround-plugin
+      prosemirror-keymap:
+        specifier: ^1.2.3
+        version: 1.2.3
+      prosemirror-state:
+        specifier: ^1.4.3
+        version: 1.4.3
+      prosemirror-view:
+        specifier: ^1.40.1
+        version: 1.40.1
       react:
         specifier: 19.1.0
         version: 19.1.0
