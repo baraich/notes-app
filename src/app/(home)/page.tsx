@@ -1,7 +1,7 @@
 "use client";
 
-import EmptyConversations from "@/modules/conversations/components/empty-conversation";
+import Dashboard from "@/modules/home/components/dashboard";
 
 export default function Homepage() {
-  return <EmptyConversations />;
+  return <Dashboard />;
 }

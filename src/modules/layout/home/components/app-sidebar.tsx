@@ -26,13 +26,96 @@ import { Skeleton } from "@/components/ui/skeleton";
 const sidebarMenuButtonClassname =
   "text-zinc-300 p-2.5 h-full hover:bg-zinc-800 hover:text-white active:bg-zinc-800 active:text-white transition-colors";
 
+const makeDocumentsLink = (id: string) => `/d/${id}`;
+
+interface SidebarSectionProps<T extends { id: string; name: string }> {
+  title: string;
+  items: T[];
+  isLoading: boolean;
+  isCreating: boolean;
+  onCreate: () => void;
+  makeLink: (id: string) => string;
+  emptyMessage: string;
+}
+
+function SidebarSection<T extends { id: string; name: string }>({
+  title,
+  items,
+  isLoading,
+  isCreating,
+  onCreate,
+  makeLink,
+  emptyMessage,
+}: SidebarSectionProps<T>) {
+  const pathname = usePathname();
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel className="flex items-center justify-between text-zinc-400">
+        <span className="pl-0.5">{title}</span>
+        <Button
+          onClick={onCreate}
+          size={"icon"}
+          variant={"ghost"}
+          className="h-7 w-7"
+          disabled={isCreating}
+        >
+          {isCreating ? (
+            <Loader2Icon className="h-3.5! w-3.5! animate-spin" />
+          ) : (
+            <PlusIcon className="h-3.5! w-3.5!" />
+          )}
+        </Button>
+      </SidebarGroupLabel>
+      <SidebarMenu className="gap-0">
+        {isLoading || isCreating ? (
+          <>
+            {Array.from({ length: 2 }).map((_, i) => (
+              <SidebarMenuItem key={i}>
+                <SidebarMenuButton
+                  disabled
+                  className="h-full bg-transparent hover:bg-transparent"
+                >
+                  <Skeleton className="h-4 w-full p-4" />
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </>
+        ) : items.length === 0 ? (
+          <SidebarMenuItem>
+            <SidebarMenuButton className={sidebarMenuButtonClassname}>
+              {emptyMessage}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ) : (
+          items.map((item) => (
+            <SidebarMenuItem key={item.id}>
+              <SidebarMenuButton
+                asChild
+                className={cn(
+                  sidebarMenuButtonClassname,
+                  pathname.includes(item.id) && "bg-zinc-800 text-white",
+                )}
+              >
+                <Link href={makeLink(item.id)}>{item.name}</Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))
+        )}
+      </SidebarMenu>
+    </SidebarGroup>
+  );
+}
+
 export default function AppSidebar() {
   const trpc = useTRPC();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const pathname = usePathname();
-  const { data: conversations = [], isLoading } = useQuery(
-    trpc.conversations.listUserConversations.queryOptions(),
+
+  const { data: conversations = [], isLoading: isLoadingConversations } =
+    useQuery(trpc.conversations.listUserConversations.queryOptions());
+
+  const { data: documents = [], isLoading: isLoadingDocuments } = useQuery(
+    trpc.documents.listUserDocuments.queryOptions(),
   );
 
   const createConversationMutation = useMutation(
@@ -59,6 +142,30 @@ export default function AppSidebar() {
     }),
   );
 
+  const createDocumentMutation = useMutation(
+    trpc.documents.create.mutationOptions({
+      onMutate() {
+        toast.loading("Creating a new document", {
+          id: "create-document-sidebar",
+        });
+      },
+      onSuccess(data) {
+        queryClient.invalidateQueries(
+          trpc.documents.listUserDocuments.queryOptions(),
+        );
+        router.push(makeDocumentsLink(data.id));
+        toast.success("Document created", {
+          id: "create-document-sidebar",
+        });
+      },
+      onError() {
+        toast.error("Failed to create a new document", {
+          id: "create-document-sidebar",
+        });
+      },
+    }),
+  );
+
   return (
     <Sidebar className="border-r border-zinc-800 bg-zinc-900 px-2 pt-1 text-white">
       <SidebarHeader className="bg-zinc-900">
@@ -71,61 +178,24 @@ export default function AppSidebar() {
         />
       </SidebarHeader>
       <SidebarContent className="bg-zinc-900">
-        <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center justify-between text-zinc-400">
-            <span className="pl-0.5">Conversations</span>
-            <Button
-              onClick={() => createConversationMutation.mutate()}
-              size={"icon"}
-              variant={"ghost"}
-              className="h-7 w-7"
-            >
-              {createConversationMutation.isPending ? (
-                <Loader2Icon className="h-3.5! w-3.5! animate-spin" />
-              ) : (
-                <PlusIcon className="h-3.5! w-3.5!" />
-              )}
-            </Button>
-          </SidebarGroupLabel>
-          <SidebarMenu className="gap-0">
-            {isLoading || createConversationMutation.isPending ? (
-              <>
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <SidebarMenuItem key={i}>
-                    <SidebarMenuButton
-                      disabled
-                      className="h-full bg-transparent hover:bg-transparent"
-                    >
-                      <Skeleton className="h-4 w-full p-4" />
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </>
-            ) : conversations.length === 0 ? (
-              <SidebarMenuItem>
-                <SidebarMenuButton className={sidebarMenuButtonClassname}>
-                  No conversation yet!
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ) : (
-              conversations.map((link) => (
-                <SidebarMenuItem key={link.id}>
-                  <SidebarMenuButton
-                    asChild
-                    className={cn(
-                      sidebarMenuButtonClassname,
-                      pathname.includes(link.id) && "bg-zinc-800 text-white",
-                    )}
-                  >
-                    <Link href={makeConversationsLink(link.id)}>
-                      {link.name}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))
-            )}
-          </SidebarMenu>
-        </SidebarGroup>
+        <SidebarSection
+          title="Documents"
+          items={documents}
+          isLoading={isLoadingDocuments}
+          isCreating={createDocumentMutation.isPending}
+          onCreate={() => createDocumentMutation.mutate()}
+          makeLink={makeDocumentsLink}
+          emptyMessage="No documents yet!"
+        />
+        <SidebarSection
+          title="Conversations"
+          items={conversations}
+          isLoading={isLoadingConversations}
+          isCreating={createConversationMutation.isPending}
+          onCreate={() => createConversationMutation.mutate()}
+          makeLink={makeConversationsLink}
+          emptyMessage="No conversation yet!"
+        />
       </SidebarContent>
       <SidebarFooter className="border-t border-zinc-800 bg-zinc-900 pt-1">
         <Button

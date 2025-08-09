@@ -8,6 +8,7 @@ import useConversation from "@/modules/conversations/hooks/use-conversation";
 import EmptyConversations from "@/modules/conversations/components/empty-conversation";
 
 import MessageInput from "@/modules/home/components/message-input";
+import ModernHeader from "@/modules/conversations/components/modern-header";
 
 interface Props {
   params: Promise<{
@@ -22,7 +23,6 @@ export default function ConversationPage({ params }: Props) {
     messages,
     messageStartRef,
     handleMessage,
-    hasPendingMessages,
     isPending,
     isMessageStreamPending,
   } = useConversation({
@@ -41,24 +41,27 @@ export default function ConversationPage({ params }: Props) {
     return notFound();
   }
 
-  if (messages.length === 0) {
-    return <EmptyConversations />;
-  }
-
   return (
     <div className="flex h-full w-full flex-col bg-zinc-950">
-      <ConversationListing
+      <ModernHeader
         conversationId={conversationId}
-        userConversation={userConversation}
-        messages={messages}
-        messageStartRef={messageStartRef}
-        isMessageStreamPending={isMessageStreamPending}
+        createdAt={userConversation.data?.createdAt}
+        name={userConversation.data?.name || undefined}
       />
+      {messages.length == 0 ? (
+        <EmptyConversations />
+      ) : (
+        <ConversationListing
+          messages={messages}
+          messageStartRef={messageStartRef}
+          isMessageStreamPending={isMessageStreamPending}
+        />
+      )}
       <div className="sticky bottom-0 px-6 pb-4 backdrop-blur-md">
         <div className="mx-auto max-w-4xl">
           <MessageInput
             onSubmit={handleMessage}
-            disabled={hasPendingMessages}
+            disabled={isMessageStreamPending}
           />
         </div>
       </div>

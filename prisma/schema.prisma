@@ -26,6 +26,7 @@ model User {
   members       Member[]
   invitations   Invitation[]
   Conversations Conversations[]
+  Document      Document[]
 
   @@unique([email])
   @@map("user")
@@ -155,4 +156,20 @@ model Message {
   updatedAt DateTime @updatedAt
 
   conversation Conversations @relation(fields: [conversationsId], references: [id], onDelete: Cascade)
+}
+
+model Document {
+  id      String  @id @default(cuid())
+  name    String
+  content String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parentId     String?
+  parent       Document?  @relation("DocumentParent", fields: [parentId], references: [id])
+  subDocuments Document[] @relation("DocumentParent")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 }

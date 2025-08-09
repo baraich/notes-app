@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TRPCReactProvider } from "@/trpc/client";
 
 const fontSpaceGrotesk = Space_Grotesk({
-  weight: ["400"],
+  weight: ["400", "700"],
   subsets: ["latin"],
   variable: "--space-grotesk",
 });

@@ -133,7 +133,7 @@ export default function useConversation({ conversationId }: Props) {
   }, [messages]);
 
   const handleMessage = useCallback(
-    (val: string, pending_message_id?: string) => {
+    (val: string) => {
       // Add validation
       if (!val?.trim()) {
         console.error("Cannot send empty message");
@@ -144,42 +144,14 @@ export default function useConversation({ conversationId }: Props) {
         return;
       }
 
-      if (pending_message_id) {
-        setMessages((messages) => {
-          return messages.slice(1, messages.length);
-        });
-      }
-
       createMessage.mutate({
         query: val,
         conversationId,
-        pending_message_id,
         messages: messages.slice(-4),
       });
     },
     [conversationId, createMessage, messages],
   );
-
-  const hasPendingMessages = messages.find(
-    (message) => message.status === "PENDING",
-  );
-
-  // Fixed effect with proper dependencies and validation
-  useEffect(() => {
-    if (
-      !userConversation.data ||
-      !(userConversation.data.Message[0].status === "PENDING")
-    )
-      return;
-
-    const firstMessage = userConversation.data.Message[0];
-    if (!firstMessage?.content || !firstMessage?.id) {
-      console.error("Invalid pending message data");
-      return;
-    }
-
-    handleMessage(firstMessage.content, firstMessage.id);
-  }, [userConversation.data, handleMessage]);
 
   return {
     userConversation,
@@ -192,7 +164,6 @@ export default function useConversation({ conversationId }: Props) {
         messages[messages.length - 1].role === "ASSISTANT")
         ? messages[messages.length - 1].content == ""
         : false,
-    hasPendingMessages: !!hasPendingMessages,
     isPending: userConversation.isPending,
   };
 }
