@@ -146,4 +146,9 @@
   .maplibregl-map {
     @apply h-64! max-h-64! min-h-64!;
   }
+
+  /* TipTap */
+  ul > li {
+    @apply -ml-1;
+  }
 }

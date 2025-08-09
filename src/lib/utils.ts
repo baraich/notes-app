@@ -9,6 +9,8 @@ export function makeConversationsLink(id: string) {
   return `/c/${id}`;
 }
 
+export const makeDocumentsLink = (id: string) => `/d/${id}`;
+
 export function getActualPrice(price: number) {
   return price * 90;
 }

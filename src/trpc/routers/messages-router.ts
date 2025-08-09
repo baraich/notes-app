@@ -148,6 +148,7 @@ export const messagesRouter = createTRPCRouter({
         });
 
         let messageContent = "";
+        // eslint-disable-next-line
         const toolCalls: ToolCall<any>[] = [];
 
         for await (const chunk of response.fullStream) {

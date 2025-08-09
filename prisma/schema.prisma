@@ -26,6 +26,7 @@ model User {
   members       Member[]
   invitations   Invitation[]
   Conversations Conversations[]
+  Document      Document[]
 
   @@unique([email])
   @@map("user")
@@ -168,4 +169,7 @@ model Document {
   parentId     String?
   parent       Document?  @relation("DocumentParent", fields: [parentId], references: [id])
   subDocuments Document[] @relation("DocumentParent")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 }
