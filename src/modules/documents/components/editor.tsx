@@ -4,9 +4,63 @@ import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-export default function Editor() {
+interface EditorProps {
+  initialContent: string;
+  documentId: string;
+}
+
+export default function Editor({ initialContent, documentId }: EditorProps) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const [editorContent, setEditorContent] = useState<string>(initialContent);
+  const [saveStatus, setSaveStatus] = useState<string>("Saved");
+  const isFirstRender = useRef(true);
+
+  const saveMutation = useMutation(
+    trpc.documents.save.mutationOptions({
+      onMutate() {
+        toast.loading("Saving document", {
+          id: "saving-document",
+        });
+      },
+      onError() {
+        toast.error("Failed to save the document", {
+          id: "saving-document",
+        });
+      },
+      onSuccess() {
+        toast.success("Document saved", {
+          id: "saving-document",
+        });
+      },
+    }),
+  );
+  const debouncedEditorContent = useDebounce(editorContent.trim(), 500);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const saveContent = async (content: string) => {
+      setSaveStatus("Saving...");
+      await saveMutation.mutateAsync({ content, id: documentId });
+      setSaveStatus("Saved");
+    };
+
+    if (debouncedEditorContent) {
+      saveContent(debouncedEditorContent);
+    }
+  }, [debouncedEditorContent]);
+
   const editor = useEditor({
+    content: initialContent,
     extensions: [
       StarterKit.configure({
         heading: {
@@ -27,11 +81,17 @@ export default function Editor() {
         class: "focus:outline-none",
       },
     },
+    onUpdate: ({ editor }) => {
+      setEditorContent(editor.getHTML());
+    },
     injectCSS: false,
   });
 
   return (
-    <div className="max-h-screen min-h-screen bg-zinc-900 px-4 py-3 text-white">
+    <div className="relative max-h-screen min-h-screen bg-zinc-900 px-4 py-3 text-white">
+      <div className="pointer-events-none absolute top-1 right-0 mb-4 text-right text-xs text-zinc-400">
+        {saveStatus}
+      </div>
       <EditorContent
         translate="no"
         editor={editor}

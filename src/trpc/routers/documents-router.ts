@@ -70,7 +70,7 @@ export const documentsRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string().min(1),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { id, name } = input;
@@ -90,6 +90,41 @@ export const documentsRouter = createTRPCRouter({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to rename document.",
+        });
+      }
+    }),
+  save: protectedProcedure
+    .input(z.object({ id: z.string().min(1), content: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const document = await prismaClient.document.findFirst({
+          where: {
+            id: input.id,
+            userId: ctx.auth.user.id,
+          },
+        });
+
+        if (!document) {
+          return new TRPCError({
+            code: "NOT_FOUND",
+            message: "Requested document does not access!",
+          });
+        }
+
+        await prismaClient.document.update({
+          data: {
+            content: input.content,
+          },
+          where: {
+            id: input.id,
+            userId: ctx.auth.user.id,
+          },
+        });
+      } catch (error) {
+        console.error("Save mutation", error);
+        return new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to save the document. Please try again later.",
         });
       }
     }),

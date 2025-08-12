@@ -43,7 +43,10 @@ export default function DocumentPage({ params }: Props) {
         name={document.name || undefined}
       />
       <div className="flex-1 bg-zinc-900 px-4 pt-6">
-        <Editor />
+        <Editor
+          documentId={document.id}
+          initialContent={document.content || ""}
+        />
       </div>
     </div>
   );
