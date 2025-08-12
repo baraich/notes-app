@@ -19,7 +19,9 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   dialogTitle: string;
   dialogDescription: React.ReactNode;
+  // eslint-disable-next-line
   form: UseFormReturn<any>;
+  // eslint-disable-next-line
   onSubmit: (values: any) => void;
   isPending: boolean;
   submitButtonText: string;

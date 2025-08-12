@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Map as MapLibre, Marker } from "@vis.gl/react-maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import { MapToolInput, MapToolOutput } from "@/modules/tools/interface";
 
@@ -17,7 +17,7 @@ export default function MapDisplay({ output }: MapDisplayProps) {
   //   "dark" | "positron" | "liberty"
   // >("dark");
 
-  const fitBounds = () => {
+  const fitBounds = useCallback(() => {
     if (!mapRef.current || output.points.length < 2) return;
 
     const bounds = new maplibregl.LngLatBounds();
@@ -28,12 +28,12 @@ export default function MapDisplay({ output }: MapDisplayProps) {
       maxZoom: 15,
       duration: 1000,
     });
-  };
+  }, [mapRef, output.points]);
 
   useEffect(() => {
     if (!mapLoaded) return;
     fitBounds();
-  }, [mapRef.current, output.points, mapLoaded]);
+  }, [mapRef, output.points, mapLoaded, fitBounds]);
 
   if (output.points.length === 0) {
     return (

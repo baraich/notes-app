@@ -1,5 +1,5 @@
 "use client";
-import { JSX, useEffect, useRef, useState } from "react";
+import { JSX, useCallback, useEffect, useState } from "react";
 import MapDisplayTool from "../../tools/components/map-display-tool";
 import { parseMarkdown } from "@/lib/markdown";
 import { ToolCall, ValidTool } from "@/modules/tools/interface";
@@ -28,11 +28,13 @@ const afterTools = {
   map: toolUi["map"],
 } as const;
 
-export default function AssistantMessage({ content, toolCalls }: AssistantMessageProps) {
+export default function AssistantMessage({
+  content,
+  toolCalls,
+}: AssistantMessageProps) {
   const [cleanHtmlContent, setCleanHtmlContent] = useState("");
-  const messageEndRef = useRef<HTMLDivElement | null>(null);
 
-  const updateContent = async () => {
+  const updateContent = useCallback(async () => {
     let c = content;
     if (c.startsWith("```")) {
       c = c.substring(3);
@@ -41,19 +43,14 @@ export default function AssistantMessage({ content, toolCalls }: AssistantMessag
       c = c.substring(0, c.length - 3);
     }
     setCleanHtmlContent(await parseMarkdown(c));
-  };
+  }, [content]);
 
   useEffect(
     function () {
       updateContent();
     },
-    [content],
+    [content, updateContent],
   );
-
-  useEffect(() => {
-    // Scroll into view when the content or tools change
-    messageEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [cleanHtmlContent, toolCalls?.length]);
 
   return (
     <div className="flex justify-start">
@@ -94,7 +91,6 @@ export default function AssistantMessage({ content, toolCalls }: AssistantMessag
               </div>
             );
           })}
-          <div ref={messageEndRef} />
         </div>
       </div>
     </div>

@@ -111,7 +111,6 @@ function SidebarSection<T extends { id: string; name: string }>({
 export default function AppSidebar() {
   const trpc = useTRPC();
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const { data: conversations = [], isLoading: isLoadingConversations } =
     useQuery(trpc.conversations.listUserConversations.queryOptions());
@@ -135,7 +134,9 @@ export default function AppSidebar() {
     invalidate: [
       (qc: ReturnType<typeof useQueryClient>) =>
         // Type cast to QueryClient for correct method usage
-        (qc as unknown as import("@tanstack/react-query").QueryClient).invalidateQueries(
+        (
+          qc as unknown as import("@tanstack/react-query").QueryClient
+        ).invalidateQueries(
           trpc.conversations.listUserConversations.queryOptions(),
         ),
     ],
@@ -155,9 +156,9 @@ export default function AppSidebar() {
     },
     invalidate: [
       (qc: ReturnType<typeof useQueryClient>) =>
-        (qc as unknown as import("@tanstack/react-query").QueryClient).invalidateQueries(
-          trpc.documents.listUserDocuments.queryOptions(),
-        ),
+        (
+          qc as unknown as import("@tanstack/react-query").QueryClient
+        ).invalidateQueries(trpc.documents.listUserDocuments.queryOptions()),
     ],
   });
 

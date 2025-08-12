@@ -3,11 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import NameField from "@/components/form/name-field";
-import { useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
-import { toast } from "sonner";
 import EntityActionDialog from "@/components/entity-action-dialog";
 import { useAppMutation } from "@/hooks/use-app-mutation";
 
@@ -27,7 +24,6 @@ export default function RenameDocumentDialog({
   documentId,
 }: Props) {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,10 +31,7 @@ export default function RenameDocumentDialog({
     },
   });
 
-  const {
-    mutate: renameDocument,
-    isPending,
-  } = useAppMutation({
+  const { mutate: renameDocument, isPending } = useAppMutation({
     base: trpc.documents.rename.mutationOptions({
       onSuccess: () => {
         onOpenChange(false);
@@ -52,8 +45,12 @@ export default function RenameDocumentDialog({
       error: "Failed to rename the document",
     },
     invalidate: [
-      (qc) => qc.invalidateQueries(trpc.documents.listUserDocuments.queryOptions()),
-      (qc) => qc.invalidateQueries(trpc.documents.getById.queryOptions({ documentId })),
+      (qc) =>
+        qc.invalidateQueries(trpc.documents.listUserDocuments.queryOptions()),
+      (qc) =>
+        qc.invalidateQueries(
+          trpc.documents.getById.queryOptions({ documentId }),
+        ),
     ],
   });
 
@@ -75,7 +72,11 @@ export default function RenameDocumentDialog({
       isPending={isPending}
       submitButtonText="Rename"
     >
-      <NameField control={form.control} name="name" placeholder="e.g. My awesome document" />
+      <NameField
+        control={form.control}
+        name="name"
+        placeholder="e.g. My awesome document"
+      />
     </EntityActionDialog>
   );
 }

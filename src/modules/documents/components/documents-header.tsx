@@ -34,6 +34,17 @@ export default function DocumentsHeader({ name, documentId }: Props) {
         name={name}
         onOpenRename={() => setRenameDialogOpen(true)}
         onOpenDelete={() => setDeleteDialogOpen(true)}
+        leftContent={
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push("/")}
+            className="text-zinc-400 hover:text-white"
+            aria-label="Back"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+        }
       />
     </>
   );

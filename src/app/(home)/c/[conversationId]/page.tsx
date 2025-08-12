@@ -21,7 +21,6 @@ export default function ConversationPage({ params }: Props) {
   const {
     userConversation,
     messages,
-    messageStartRef,
     handleMessage,
     isPending,
     isMessageStreamPending,
@@ -41,7 +40,6 @@ export default function ConversationPage({ params }: Props) {
     <div className="flex h-full w-full flex-col bg-zinc-950">
       <ModernHeader
         conversationId={conversationId}
-        createdAt={userConversation.data?.createdAt}
         name={userConversation.data?.name || undefined}
       />
       {messages.length == 0 ? (
@@ -49,11 +47,10 @@ export default function ConversationPage({ params }: Props) {
       ) : (
         <ConversationListing
           messages={messages}
-          messageStartRef={messageStartRef}
           isMessageStreamPending={isMessageStreamPending}
         />
       )}
-      <div className="sticky bottom-0 px-6 pb-4 backdrop-blur-md">
+      <div className="fixed right-0 bottom-0 left-0 px-6 pb-4 backdrop-blur-md">
         <div className="mx-auto max-w-4xl">
           <MessageInput
             onSubmit={handleMessage}

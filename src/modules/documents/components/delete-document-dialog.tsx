@@ -3,11 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import NameField from "@/components/form/name-field";
-import { useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import EntityActionDialog from "@/components/entity-action-dialog";
 import { useAppMutation } from "@/hooks/use-app-mutation";
@@ -30,7 +27,6 @@ export default function DeleteDocumentDialog({
   requiredName,
 }: Props) {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,11 +50,12 @@ export default function DeleteDocumentDialog({
       error: "Failed to delete the document",
     },
     invalidate: [
-      (qc) => qc.invalidateQueries(trpc.documents.listUserDocuments.queryOptions()),
+      (qc) =>
+        qc.invalidateQueries(trpc.documents.listUserDocuments.queryOptions()),
     ],
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit() {
     deleteMutation.mutate({
       id: documentId,
     });
@@ -74,7 +71,7 @@ export default function DeleteDocumentDialog({
       dialogDescription={
         <>
           To confirm, type{" "}
-          <span className="font-semibold text-primary">{requiredName}</span> in
+          <span className="text-primary font-semibold">{requiredName}</span> in
           the box below. This action is not reversible.
         </>
       }
@@ -85,7 +82,11 @@ export default function DeleteDocumentDialog({
       submitButtonVariant="destructive"
       submitButtonDisabled={nameValue !== requiredName}
     >
-      <NameField control={form.control} name="name" placeholder={requiredName} />
+      <NameField
+        control={form.control}
+        name="name"
+        placeholder={requiredName}
+      />
     </EntityActionDialog>
   );
 }
