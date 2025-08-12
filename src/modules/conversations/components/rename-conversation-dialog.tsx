@@ -1,30 +1,14 @@
 "use client";
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { toast } from "sonner";
-import { Loader2Icon } from "lucide-react";
+import EntityActionDialog from "@/components/entity-action-dialog";
 
 interface Props {
   open: boolean;
@@ -88,49 +72,28 @@ export default function RenameConversationDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader className="text-left">
-          <DialogTitle>Rename conversation</DialogTitle>
-          <DialogDescription>
-            Enter a new name for this conversation below.
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  {/* <FormLabel>Name</FormLabel> */}
-                  <FormControl>
-                    <Input
-                      placeholder="e.g. My awesome conversation"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="destructive">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button type="submit" variant={"normal"}>
-                {renameMutation.isPending ? (
-                  <Loader2Icon className="animate-spin" />
-                ) : (
-                  <span>Rename</span>
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <EntityActionDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      dialogTitle="Rename conversation"
+      dialogDescription="Enter a new name for this conversation below."
+      form={form}
+      onSubmit={onSubmit}
+      isPending={renameMutation.isPending}
+      submitButtonText="Rename"
+    >
+      <FormField
+        control={form.control}
+        name="name"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <Input placeholder="e.g. My awesome conversation" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </EntityActionDialog>
   );
 }

@@ -3,7 +3,7 @@
 import { notFound } from "next/navigation";
 import { use } from "react";
 import ConversationListing from "@/modules/conversations/components/conversation-listing";
-import { Loader2Icon } from "lucide-react";
+import FullScreenLoader from "@/components/full-screen-loader";
 import useConversation from "@/modules/conversations/hooks/use-conversation";
 import EmptyConversations from "@/modules/conversations/components/empty-conversation";
 
@@ -30,11 +30,7 @@ export default function ConversationPage({ params }: Props) {
   });
 
   if (isPending) {
-    return (
-      <div className="flex h-full min-h-screen w-full items-center justify-center bg-zinc-950">
-        <Loader2Icon className="animate-spin text-zinc-400" />
-      </div>
-    );
+    return <FullScreenLoader />;
   }
 
   if (!userConversation.data) {

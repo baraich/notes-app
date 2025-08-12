@@ -39,7 +39,7 @@ export default function ModernHeader({
         conversationId={conversationId}
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
-        required_name={name || ""}
+        requiredName={name || ""}
       />
       <div className="sticky top-0 z-10 border-b border-zinc-700 bg-zinc-800/80 px-2 py-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
