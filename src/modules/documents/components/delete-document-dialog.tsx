@@ -4,12 +4,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import NameField from "@/components/form/name-field";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import EntityActionDialog from "@/components/entity-action-dialog";
+import { useAppMutation } from "@/hooks/use-app-mutation";
 
 interface Props {
   open: boolean;
@@ -37,32 +38,25 @@ export default function DeleteDocumentDialog({
       name: "",
     },
   });
-  const deleteMutation = useMutation(
-    trpc.documents.delete.mutationOptions({
-      onMutate() {
-        toast.loading("Deleting the document", {
-          id: "delete-document",
-        });
-      },
+  const deleteMutation = useAppMutation({
+    base: trpc.documents.delete.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(
-          trpc.documents.listUserDocuments.queryOptions(),
-        );
-        toast.success("Document deleted!", {
-          id: "delete-document",
-        });
         router.push("/");
-      },
-      onError() {
-        toast.error("Failed to delete the document", {
-          id: "delete-document",
-        });
       },
       onSettled() {
         onOpenChange(false);
       },
     }),
-  );
+    toast: {
+      id: "delete-document",
+      loading: "Deleting the document",
+      success: "Document deleted!",
+      error: "Failed to delete the document",
+    },
+    invalidate: [
+      (qc) => qc.invalidateQueries(trpc.documents.listUserDocuments.queryOptions()),
+    ],
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     deleteMutation.mutate({
@@ -91,18 +85,7 @@ export default function DeleteDocumentDialog({
       submitButtonVariant="destructive"
       submitButtonDisabled={nameValue !== requiredName}
     >
-      <FormField
-        control={form.control}
-        name="name"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <Input placeholder={requiredName} {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <NameField control={form.control} name="name" placeholder={requiredName} />
     </EntityActionDialog>
   );
 }

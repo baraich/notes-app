@@ -4,12 +4,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import NameField from "@/components/form/name-field";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import EntityActionDialog from "@/components/entity-action-dialog";
+import { useAppMutation } from "@/hooks/use-app-mutation";
 
 interface Props {
   open: boolean;
@@ -37,32 +38,25 @@ export default function DeleteConversationDialog({
       name: "",
     },
   });
-  const deleteMutation = useMutation(
-    trpc.conversations.delete.mutationOptions({
-      onMutate() {
-        toast.loading("Deleting the conversation", {
-          id: "delete-conversation",
-        });
-      },
+  const deleteMutation = useAppMutation({
+    base: trpc.conversations.delete.mutationOptions({
       onSuccess() {
-        queryClient.invalidateQueries(
-          trpc.conversations.listUserConversations.queryOptions(),
-        );
-        toast.success("Conversation deleted!", {
-          id: "delete-conversation",
-        });
         router.push("/");
-      },
-      onError() {
-        toast.error("Failed to delete the conversation", {
-          id: "delete-conversation",
-        });
       },
       onSettled() {
         onOpenChange(false);
       },
     }),
-  );
+    toast: {
+      id: "delete-conversation",
+      loading: "Deleting the conversation",
+      success: "Conversation deleted!",
+      error: "Failed to delete the conversation",
+    },
+    invalidate: [
+      (qc) => qc.invalidateQueries(trpc.conversations.listUserConversations.queryOptions()),
+    ],
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     deleteMutation.mutate({
@@ -91,18 +85,7 @@ export default function DeleteConversationDialog({
       submitButtonVariant="destructive"
       submitButtonDisabled={nameValue !== requiredName}
     >
-      <FormField
-        control={form.control}
-        name="name"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <Input placeholder={requiredName} {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <NameField control={form.control} name="name" placeholder={requiredName} />
     </EntityActionDialog>
   );
 }

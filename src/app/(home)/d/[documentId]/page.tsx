@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { use } from "react";
-import FullScreenLoader from "@/components/full-screen-loader";
+import FullScreenLoader from "@/components/common/full-screen-loader";
 import DocumentsHeader from "@/modules/documents/components/documents-header";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";

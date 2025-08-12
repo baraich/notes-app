@@ -3,7 +3,7 @@
 import { notFound } from "next/navigation";
 import { use } from "react";
 import ConversationListing from "@/modules/conversations/components/conversation-listing";
-import FullScreenLoader from "@/components/full-screen-loader";
+import FullScreenLoader from "@/components/common/full-screen-loader";
 import useConversation from "@/modules/conversations/hooks/use-conversation";
 import EmptyConversations from "@/modules/conversations/components/empty-conversation";
 

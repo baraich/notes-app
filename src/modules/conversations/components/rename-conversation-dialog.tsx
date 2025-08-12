@@ -4,11 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import NameField from "@/components/form/name-field";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { toast } from "sonner";
 import EntityActionDialog from "@/components/entity-action-dialog";
+import { useAppMutation } from "@/hooks/use-app-mutation";
 
 interface Props {
   open: boolean;
@@ -33,35 +34,27 @@ export default function RenameConversationDialog({
       name: "",
     },
   });
-  const renameMutation = useMutation(
-    trpc.conversations.rename.mutationOptions({
-      onMutate() {
-        toast.loading("Renaming the conversation", {
-          id: "rename-conversation",
-        });
+  const renameMutation = useAppMutation(
+    {
+      base: trpc.conversations.rename.mutationOptions({
+        onSettled() {
+          onOpenChange(false);
+        },
+      }),
+      toast: {
+        id: "rename-conversation",
+        loading: "Renaming the conversation",
+        success: "Conversation renamed!",
+        error: "Failed to rename the conversation",
       },
-      onSuccess() {
-        queryClient.invalidateQueries(
-          trpc.conversations.listUserConversations.queryOptions(),
-        );
-        queryClient.invalidateQueries(
-          trpc.conversations.listConversationWithMessages.queryOptions({
-            id: conversationId,
-          }),
-        );
-        toast.success("Conversation renamed!", {
-          id: "rename-conversation",
-        });
-      },
-      onError() {
-        toast.error("Failed to rename the conversation", {
-          id: "rename-conversation",
-        });
-      },
-      onSettled() {
-        onOpenChange(false);
-      },
-    }),
+      invalidate: [
+        (qc) => qc.invalidateQueries(trpc.conversations.listUserConversations.queryOptions()),
+        (qc) =>
+          qc.invalidateQueries(
+            trpc.conversations.listConversationWithMessages.queryOptions({ id: conversationId }),
+          ),
+      ],
+    },
   );
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -82,18 +75,7 @@ export default function RenameConversationDialog({
       isPending={renameMutation.isPending}
       submitButtonText="Rename"
     >
-      <FormField
-        control={form.control}
-        name="name"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <Input placeholder="e.g. My awesome conversation" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <NameField control={form.control} name="name" placeholder="e.g. My awesome conversation" />
     </EntityActionDialog>
   );
 }

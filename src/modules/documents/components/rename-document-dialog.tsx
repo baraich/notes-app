@@ -4,11 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import NameField from "@/components/form/name-field";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { toast } from "sonner";
 import EntityActionDialog from "@/components/entity-action-dialog";
+import { useAppMutation } from "@/hooks/use-app-mutation";
 
 interface Props {
   open: boolean;
@@ -34,34 +35,27 @@ export default function RenameDocumentDialog({
     },
   });
 
-  const { mutate: renameDocument, isPending } = useMutation(
-    trpc.documents.rename.mutationOptions({
-      onMutate: async () => {
-        toast.loading("Renaming the document", {
-          id: "rename-document",
-        });
-      },
+  const {
+    mutate: renameDocument,
+    isPending,
+  } = useAppMutation({
+    base: trpc.documents.rename.mutationOptions({
       onSuccess: () => {
-        toast.success("Document renamed!", {
-          id: "rename-document",
-        });
-        queryClient.invalidateQueries(
-          trpc.documents.listUserDocuments.queryOptions(),
-        );
-        queryClient.invalidateQueries(
-          trpc.documents.getById.queryOptions({ documentId }),
-        );
         onOpenChange(false);
         form.reset();
       },
-      onError: (error) => {
-        toast.error("Failed to rename the document", {
-          id: "rename-document",
-        });
-        console.error(error);
-      },
     }),
-  );
+    toast: {
+      id: "rename-document",
+      loading: "Renaming the document",
+      success: "Document renamed!",
+      error: "Failed to rename the document",
+    },
+    invalidate: [
+      (qc) => qc.invalidateQueries(trpc.documents.listUserDocuments.queryOptions()),
+      (qc) => qc.invalidateQueries(trpc.documents.getById.queryOptions({ documentId })),
+    ],
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     renameDocument({
@@ -81,18 +75,7 @@ export default function RenameDocumentDialog({
       isPending={isPending}
       submitButtonText="Rename"
     >
-      <FormField
-        control={form.control}
-        name="name"
-        render={({ field }) => (
-          <FormItem>
-            <FormControl>
-              <Input placeholder="e.g. My awesome document" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <NameField control={form.control} name="name" placeholder="e.g. My awesome document" />
     </EntityActionDialog>
   );
 }
