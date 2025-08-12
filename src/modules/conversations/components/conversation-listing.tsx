@@ -5,7 +5,7 @@ import AssistantMessage from "@/modules/messages/components/assistant-message";
 import ShimmerMessage from "@/modules/messages/components/shimmer-message";
 import { Message } from "@/generated/prisma";
 import { ToolCall } from "@/modules/tools/interface";
-import { RefObject } from "react";
+import { RefObject, useEffect, useRef } from "react";
 
 interface Props {
   messages: (Omit<
@@ -24,10 +24,25 @@ export default function ConversationListing({
   messageStartRef,
   isMessageStreamPending,
 }: Props) {
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Ensure we scroll to bottom on initial render and whenever messages change
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    // Use requestAnimationFrame to avoid layout thrash
+    requestAnimationFrame(() => {
+      container.scrollTop = container.scrollHeight;
+    });
+  }, [messages.length, isMessageStreamPending]);
+
   return (
     <div className="flex h-full w-full flex-col bg-zinc-950">
       {/* Messages Container */}
-      <div className="max-w-screen flex-1 space-y-6 overflow-y-auto px-6 py-4">
+      <div
+        ref={scrollContainerRef}
+        className="max-w-screen flex-1 space-y-6 overflow-y-auto px-6 py-4"
+      >
         <div className="mx-auto max-w-4xl space-y-6">
           {messages
             .filter(
@@ -38,16 +53,9 @@ export default function ConversationListing({
             .map((message) => (
               <div key={message.id} className="animate-in fade-in duration-300">
                 {message.role === "USER" ? (
-                  <UserMessage
-                    messageStartRef={messageStartRef}
-                    content={message.content}
-                  />
+                  <UserMessage content={message.content} />
                 ) : (
-                  <AssistantMessage
-                    messageStartRef={messageStartRef}
-                    content={message.content}
-                    toolCalls={message.toolCalls}
-                  />
+                  <AssistantMessage content={message.content} toolCalls={message.toolCalls} />
                 )}
               </div>
             ))}

@@ -127,9 +127,7 @@ export default function useConversation({ conversationId }: Props) {
 
   useEffect(() => {
     if (!messageStartRef.current) return;
-    messageStartRef.current.scrollIntoView({
-      behavior: "smooth",
-    });
+    messageStartRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages]);
 
   const handleMessage = useCallback(
