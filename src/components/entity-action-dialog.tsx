@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { Loader2Icon } from "lucide-react";
+import InlineSpinner from "@/components/common/inline-spinner";
 import { type UseFormReturn } from "react-hook-form";
 
 interface Props {
@@ -63,7 +63,7 @@ export default function EntityActionDialog({
                 disabled={isPending || submitButtonDisabled}
               >
                 {isPending ? (
-                  <Loader2Icon className="animate-spin" />
+                  <InlineSpinner />
                 ) : (
                   <span>{submitButtonText}</span>
                 )}

@@ -15,12 +15,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTRPC } from "@/trpc/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
 import { cn, makeConversationsLink } from "@/lib/utils";
-import { Loader2Icon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
+import InlineSpinner from "@/components/common/inline-spinner";
+import { useAppMutation } from "@/hooks/use-app-mutation";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const sidebarMenuButtonClassname =
@@ -60,7 +62,7 @@ function SidebarSection<T extends { id: string; name: string }>({
           disabled={isCreating}
         >
           {isCreating ? (
-            <Loader2Icon className="h-3.5! w-3.5! animate-spin" />
+            <InlineSpinner className="h-3.5! w-3.5!" />
           ) : (
             <PlusIcon className="h-3.5! w-3.5!" />
           )}
@@ -118,53 +120,46 @@ export default function AppSidebar() {
     trpc.documents.listUserDocuments.queryOptions(),
   );
 
-  const createConversationMutation = useMutation(
-    trpc.conversations.create.mutationOptions({
-      onMutate() {
-        toast.loading("Creating a new conversation", {
-          id: "create-conversation-sidebar",
-        });
-      },
+  const createConversationMutation = useAppMutation({
+    base: trpc.conversations.create.mutationOptions({
       onSuccess(data) {
-        queryClient.invalidateQueries(
-          trpc.conversations.listUserConversations.queryOptions(),
-        );
         router.push(makeConversationsLink(data.id));
-        toast.success("Conversation created", {
-          id: "create-conversation-sidebar",
-        });
-      },
-      onError() {
-        toast.error("Failed to create a new conversation", {
-          id: "create-conversation-sidebar",
-        });
       },
     }),
-  );
+    toast: {
+      id: "create-conversation-sidebar",
+      loading: "Creating a new conversation",
+      success: "Conversation created",
+      error: "Failed to create a new conversation",
+    },
+    invalidate: [
+      (qc: ReturnType<typeof useQueryClient>) =>
+        // Type cast to QueryClient for correct method usage
+        (qc as unknown as import("@tanstack/react-query").QueryClient).invalidateQueries(
+          trpc.conversations.listUserConversations.queryOptions(),
+        ),
+    ],
+  });
 
-  const createDocumentMutation = useMutation(
-    trpc.documents.create.mutationOptions({
-      onMutate() {
-        toast.loading("Creating a new document", {
-          id: "create-document-sidebar",
-        });
-      },
+  const createDocumentMutation = useAppMutation({
+    base: trpc.documents.create.mutationOptions({
       onSuccess(data) {
-        queryClient.invalidateQueries(
-          trpc.documents.listUserDocuments.queryOptions(),
-        );
         router.push(makeDocumentsLink(data.id));
-        toast.success("Document created", {
-          id: "create-document-sidebar",
-        });
-      },
-      onError() {
-        toast.error("Failed to create a new document", {
-          id: "create-document-sidebar",
-        });
       },
     }),
-  );
+    toast: {
+      id: "create-document-sidebar",
+      loading: "Creating a new document",
+      success: "Document created",
+      error: "Failed to create a new document",
+    },
+    invalidate: [
+      (qc: ReturnType<typeof useQueryClient>) =>
+        (qc as unknown as import("@tanstack/react-query").QueryClient).invalidateQueries(
+          trpc.documents.listUserDocuments.queryOptions(),
+        ),
+    ],
+  });
 
   return (
     <Sidebar className="border-r border-zinc-800 bg-zinc-900 px-2 pt-1 text-white">
