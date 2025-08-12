@@ -128,4 +128,36 @@ export const documentsRouter = createTRPCRouter({
         });
       }
     }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const document = await prismaClient.document.findFirst({
+          where: {
+            id: input.id,
+            userId: ctx.auth.user.id,
+          },
+        });
+
+        if (!document) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Requested document does not found.",
+          });
+        }
+
+        await prismaClient.document.delete({
+          where: {
+            id: document.id,
+            userId: ctx.auth.user.id,
+          },
+        });
+      } catch (error) {
+        console.error("Failed to delete document", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Could not delete the document, please try again later.",
+        });
+      }
+    }),
 });

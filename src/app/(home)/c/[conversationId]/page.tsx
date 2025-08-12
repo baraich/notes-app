@@ -31,7 +31,7 @@ export default function ConversationPage({ params }: Props) {
 
   if (isPending) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-zinc-950">
+      <div className="flex h-full min-h-screen w-full items-center justify-center bg-zinc-950">
         <Loader2Icon className="animate-spin text-zinc-400" />
       </div>
     );

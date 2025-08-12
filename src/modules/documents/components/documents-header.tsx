@@ -8,6 +8,7 @@ import {
 import { ChevronLeft, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RenameDocumentDialog from "./rename-document-dialog";
+import DeleteDocumentDialog from "./delete-document-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Breadcrumbs from "@/components/breadcrumbs";
@@ -20,6 +21,7 @@ interface Props {
 export default function DocumentsHeader({ name, documentId }: Props) {
   const router = useRouter();
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   return (
     <>
@@ -27,6 +29,12 @@ export default function DocumentsHeader({ name, documentId }: Props) {
         documentId={documentId}
         open={renameDialogOpen}
         onOpenChange={setRenameDialogOpen}
+      />
+      <DeleteDocumentDialog
+        documentId={documentId}
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        required_name={name || ""}
       />
       <div className="sticky top-0 z-10 border-b border-zinc-700 bg-zinc-800/80 px-2 py-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
@@ -44,7 +52,12 @@ export default function DocumentsHeader({ name, documentId }: Props) {
                 <DropdownMenuItem onSelect={() => setRenameDialogOpen(true)}>
                   Rename
                 </DropdownMenuItem>
-                <DropdownMenuItem>Delete</DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() => setDeleteDialogOpen(true)}
+                  className="text-red-500 focus:text-red-500"
+                >
+                  Delete
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

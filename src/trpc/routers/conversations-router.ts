@@ -140,4 +140,36 @@ export const conversationsRouter = createTRPCRouter({
         });
       }
     }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const conversation = await prismaClient.conversations.findFirst({
+          where: {
+            id: input.id,
+            userId: ctx.auth.user.id,
+          },
+        });
+
+        if (!conversation) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Requested conversation does not found.",
+          });
+        }
+
+        await prismaClient.conversations.delete({
+          where: {
+            id: conversation.id,
+            userId: ctx.auth.user.id,
+          },
+        });
+      } catch (error) {
+        console.error("Failed to delete conversation", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Could not delete the conversation, please try again later.",
+        });
+      }
+    }),
 });
