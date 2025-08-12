@@ -1,14 +1,8 @@
-import { RefObject } from "react";
-
 interface UserMessageProps {
   content: string;
-  messageStartRef: RefObject<HTMLDivElement | null>;
 }
 
-export default function UserMessage({
-  content,
-  messageStartRef,
-}: UserMessageProps) {
+export default function UserMessage({ content }: UserMessageProps) {
   return (
     <div className="flex justify-end">
       <div className="flex items-start">
@@ -19,7 +13,6 @@ export default function UserMessage({
             </p>
           </div>
         </div>
-        <div ref={messageStartRef}></div>
       </div>
     </div>
   );

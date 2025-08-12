@@ -1,5 +1,5 @@
 "use client";
-import { JSX, RefObject, useEffect, useState } from "react";
+import { JSX, useCallback, useEffect, useState } from "react";
 import MapDisplayTool from "../../tools/components/map-display-tool";
 import { parseMarkdown } from "@/lib/markdown";
 import { ToolCall, ValidTool } from "@/modules/tools/interface";
@@ -9,7 +9,6 @@ interface AssistantMessageProps {
   content: string;
   // eslint-disable-next-line
   toolCalls?: ToolCall<any>[];
-  messageStartRef: RefObject<HTMLDivElement | null>;
 }
 
 const toolUi: Record<
@@ -31,12 +30,11 @@ const afterTools = {
 
 export default function AssistantMessage({
   content,
-  messageStartRef,
   toolCalls,
 }: AssistantMessageProps) {
   const [cleanHtmlContent, setCleanHtmlContent] = useState("");
 
-  const updateContent = async () => {
+  const updateContent = useCallback(async () => {
     let c = content;
     if (c.startsWith("```")) {
       c = c.substring(3);
@@ -45,13 +43,13 @@ export default function AssistantMessage({
       c = c.substring(0, c.length - 3);
     }
     setCleanHtmlContent(await parseMarkdown(c));
-  };
+  }, [content]);
 
   useEffect(
     function () {
       updateContent();
     },
-    [content],
+    [content, updateContent],
   );
 
   return (
@@ -64,14 +62,13 @@ export default function AssistantMessage({
               return null;
             }
             return (
-              <div ref={messageStartRef} key={idx}>
+              <div key={idx}>
                 <Tool {...tool} />
               </div>
             );
           })}
           {cleanHtmlContent != "" && (
             <>
-              <div ref={messageStartRef}></div>
               <div className="rounded-2xl rounded-bl-md border border-zinc-800 bg-zinc-900 px-4 py-3 text-white shadow-lg">
                 <div
                   className="prose prose-invert prose-img:my-4 prose-pre:my-4 prose-table:my-4 prose-hr:my-4 prose-th:border prose-td:border prose-table:border-collapse prose-th:p-2! prose-td:p-2! w-full max-w-none text-sm"

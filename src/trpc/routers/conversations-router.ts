@@ -7,136 +7,117 @@ export const conversationsRouter = createTRPCRouter({
   rename: protectedProcedure
     .input(z.object({ name: z.string().min(1), id: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      try {
-        const conversation = await prismaClient.conversations.findFirst({
-          where: {
-            id: input.id,
-            userId: ctx.auth.user.id,
-          },
+      const updated = await prismaClient.$transaction(async (tx) => {
+        const result = await tx.conversations.updateMany({
+          where: { id: input.id, userId: ctx.auth.user.id },
+          data: { name: input.name },
         });
 
-        if (!conversation) {
+        if (result.count === 0) {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Conversation not found.",
           });
         }
 
-        return await prismaClient.conversations.update({
-          where: { id: conversation.id, userId: ctx.auth.user.id },
-          data: { name: input.name },
+        return tx.conversations.findFirst({
+          where: { id: input.id, userId: ctx.auth.user.id },
         });
-      } catch (error) {
-        console.error("Rename error:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to rename conversation.",
-        });
-      }
+      });
+
+      return updated;
     }),
 
   getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      try {
-        const conversation = await prismaClient.conversations.findFirst({
-          where: {
-            id: input.id,
-            userId: ctx.auth.user.id,
-          },
-        });
+      const conversation = await prismaClient.conversations.findFirst({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id,
+        },
+      });
 
-        if (!conversation) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Conversation not found.",
-          });
-        }
-
-        return conversation;
-      } catch (error) {
-        console.error("GetById error:", error);
+      if (!conversation) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch conversation.",
+          code: "NOT_FOUND",
+          message: "Conversation not found.",
         });
       }
+
+      return conversation;
     }),
 
   listUserConversations: protectedProcedure.query(async ({ ctx }) => {
-    try {
-      const conversations = await prismaClient.conversations.findMany({
-        where: {
-          userId: ctx.auth.user.id,
-        },
-        orderBy: {
-          updatedAt: "desc",
-        },
-      });
+    const conversations = await prismaClient.conversations.findMany({
+      where: {
+        userId: ctx.auth.user.id,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
 
-      return conversations;
-    } catch (error) {
-      console.error("ListUserConversations error:", error);
-      return [];
-    }
+    return conversations;
   }),
 
   create: protectedProcedure.mutation(async ({ ctx }) => {
-    try {
-      const conversation = await prismaClient.conversations.create({
-        data: {
-          name: "Untitled chat",
-          labels: [].join(","),
-          userId: ctx.auth.user.id,
-        },
-      });
+    const conversation = await prismaClient.conversations.create({
+      data: {
+        name: "Untitled chat",
+        labels: [].join(","),
+        userId: ctx.auth.user.id,
+      },
+    });
 
-      return conversation;
-    } catch (error) {
-      console.error("Create conversation error:", error);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to create conversation.",
-      });
-    }
+    return conversation;
   }),
 
   listConversationWithMessages: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      try {
-        const conversation = await prismaClient.conversations.findUnique({
-          where: {
-            id: input.id,
-            userId: ctx.auth.user.id,
-          },
-          select: {
-            id: true,
-            name: true,
-            labels: true,
-            createdAt: true,
-            updatedAt: true,
-            Message: {
-              orderBy: {
-                createdAt: "asc",
-              },
+      const conversation = await prismaClient.conversations.findFirst({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id,
+        },
+        select: {
+          id: true,
+          name: true,
+          labels: true,
+          createdAt: true,
+          updatedAt: true,
+          Message: {
+            orderBy: {
+              createdAt: "asc",
             },
           },
-        });
+        },
+      });
 
-        if (!conversation) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Conversation not found.",
-          });
-        }
-
-        return conversation;
-      } catch (error) {
-        console.error("ListConversationWithMessages error:", error);
+      if (!conversation) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch conversation and messages.",
+          code: "NOT_FOUND",
+          message: "Conversation not found.",
+        });
+      }
+
+      return conversation;
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await prismaClient.conversations.deleteMany({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id,
+        },
+      });
+
+      if (result.count === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Conversation not found.",
         });
       }
     }),

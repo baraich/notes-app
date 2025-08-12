@@ -49,6 +49,7 @@ export const messagesRouter = createTRPCRouter({
             id: input.conversationId,
             userId: ctx.auth.user.id,
           },
+          select: { id: true },
         });
 
         if (!conversation) {
@@ -88,22 +89,18 @@ export const messagesRouter = createTRPCRouter({
                 search: z.string().optional(),
               }),
               execute: async ({ search }) => {
-                try {
-                  return await prismaClient.document.findMany({
-                    where: {
-                      userId: ctx.auth.user.id,
-                      ...(search && {
-                        title: {
-                          contains: search,
-                          mode: "insensitive",
-                        },
-                      }),
-                    },
-                  });
-                } catch (error) {
-                  console.error("Error fetching documents:", error);
-                  throw new Error("Failed to fetch documents.");
-                }
+                return await prismaClient.document.findMany({
+                  where: {
+                    userId: ctx.auth.user.id,
+                    ...(search && {
+                      name: {
+                        contains: search,
+                        mode: "insensitive",
+                      },
+                    }),
+                  },
+                  orderBy: { updatedAt: "desc" },
+                });
               },
             }),
 
@@ -120,28 +117,23 @@ export const messagesRouter = createTRPCRouter({
                   ),
               }),
               execute: async ({ query, max_tokens = 1024 }) => {
-                try {
-                  const endpoint = "https://api.perplexity.ai/chat/completions";
-                  const payload = {
-                    model: "sonar-pro",
-                    messages: [{ role: "user", content: query }],
-                    max_tokens,
-                  };
-                  const res = await fetch(endpoint, {
-                    method: "POST",
-                    headers: {
-                      Authorization: `Bearer ${env.PERPLEXITY_API_KEY}`,
-                      "Content-Type": "application/json",
-                      Accept: "application/json",
-                    },
-                    body: JSON.stringify(payload),
-                  });
-                  const data = await res.json();
-                  return { results: data };
-                } catch (error) {
-                  console.error("Search tool error:", error);
-                  return { results: "Search failed. Please try again later." };
-                }
+                const endpoint = "https://api.perplexity.ai/chat/completions";
+                const payload = {
+                  model: "sonar-pro",
+                  messages: [{ role: "user", content: query }],
+                  max_tokens,
+                };
+                const res = await fetch(endpoint, {
+                  method: "POST",
+                  headers: {
+                    Authorization: `Bearer ${env.PERPLEXITY_API_KEY}`,
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                  },
+                  body: JSON.stringify(payload),
+                });
+                const data = await res.json();
+                return { results: data };
               },
             }),
 
@@ -226,6 +218,9 @@ export const messagesRouter = createTRPCRouter({
         ]);
       } catch (error) {
         console.error("Message completion error:", error);
+        if (error instanceof TRPCError) {
+          throw error;
+        }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to complete the message",

@@ -3,7 +3,7 @@
 import { notFound } from "next/navigation";
 import { use } from "react";
 import ConversationListing from "@/modules/conversations/components/conversation-listing";
-import { Loader2Icon } from "lucide-react";
+import FullScreenLoader from "@/components/common/full-screen-loader";
 import useConversation from "@/modules/conversations/hooks/use-conversation";
 import EmptyConversations from "@/modules/conversations/components/empty-conversation";
 
@@ -21,7 +21,6 @@ export default function ConversationPage({ params }: Props) {
   const {
     userConversation,
     messages,
-    messageStartRef,
     handleMessage,
     isPending,
     isMessageStreamPending,
@@ -30,11 +29,7 @@ export default function ConversationPage({ params }: Props) {
   });
 
   if (isPending) {
-    return (
-      <div className="flex h-full w-full items-center justify-center bg-zinc-950">
-        <Loader2Icon className="animate-spin text-zinc-400" />
-      </div>
-    );
+    return <FullScreenLoader />;
   }
 
   if (!userConversation.data) {
@@ -45,7 +40,6 @@ export default function ConversationPage({ params }: Props) {
     <div className="flex h-full w-full flex-col bg-zinc-950">
       <ModernHeader
         conversationId={conversationId}
-        createdAt={userConversation.data?.createdAt}
         name={userConversation.data?.name || undefined}
       />
       {messages.length == 0 ? (
@@ -53,11 +47,10 @@ export default function ConversationPage({ params }: Props) {
       ) : (
         <ConversationListing
           messages={messages}
-          messageStartRef={messageStartRef}
           isMessageStreamPending={isMessageStreamPending}
         />
       )}
-      <div className="sticky bottom-0 px-6 pb-4 backdrop-blur-md">
+      <div className="fixed right-0 bottom-0 left-0 px-6 pb-4 backdrop-blur-md">
         <div className="mx-auto max-w-4xl">
           <MessageInput
             onSubmit={handleMessage}

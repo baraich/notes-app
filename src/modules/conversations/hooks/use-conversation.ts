@@ -2,7 +2,7 @@
 
 import { useTRPC } from "@/trpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ToolCall } from "@/modules/tools/interface";
 import { Message } from "@/generated/prisma";
 
@@ -30,7 +30,6 @@ export default function useConversation({ conversationId }: Props) {
   );
 
   const [messages, setMessages] = useState<LocalMessage[]>([]);
-  const messageStartRef = useRef<HTMLDivElement>(null);
 
   const updateStreamingMessage = useCallback(
     (updater: (message: LocalMessage) => LocalMessage) => {
@@ -125,13 +124,6 @@ export default function useConversation({ conversationId }: Props) {
     );
   }, [userConversation.data]);
 
-  useEffect(() => {
-    if (!messageStartRef.current) return;
-    messageStartRef.current.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [messages]);
-
   const handleMessage = useCallback(
     (val: string) => {
       // Add validation
@@ -156,7 +148,7 @@ export default function useConversation({ conversationId }: Props) {
   return {
     userConversation,
     messages,
-    messageStartRef,
+    // messageStartRef removed; scrolling handled in listing
     handleMessage,
     isMessageStreamPending:
       isMessageStreamPending ||

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useTRPC } from "@/trpc/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 interface EditorProps {
@@ -53,7 +53,7 @@ export default function Editor({ initialContent, documentId }: EditorProps) {
     if (debouncedEditorContent) {
       saveContent(debouncedEditorContent);
     }
-  }, [debouncedEditorContent]);
+  }, [debouncedEditorContent, documentId, saveMutation]);
 
   const editor = useEditor({
     content: initialContent,

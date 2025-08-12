@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { use } from "react";
-import { Loader2Icon } from "lucide-react";
+import FullScreenLoader from "@/components/common/full-screen-loader";
 import DocumentsHeader from "@/modules/documents/components/documents-header";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
@@ -24,11 +24,7 @@ export default function DocumentPage({ params }: Props) {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex h-full w-full items-center justify-center bg-zinc-950">
-        <Loader2Icon className="animate-spin text-zinc-400" />
-      </div>
-    );
+    return <FullScreenLoader />;
   }
 
   if (!document) {

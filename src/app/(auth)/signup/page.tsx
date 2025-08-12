@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Loader2Icon } from "lucide-react";
+import InlineSpinner from "@/components/common/inline-spinner";
 
 const signUpSchema = z.object({
   name: z.string().min(1, "Full name is required!"),
@@ -125,11 +125,7 @@ export default function SignUp() {
             )}
           />
           <Button disabled={isPending} type="submit" variant={"normal"}>
-            {isPending ? (
-              <Loader2Icon className="animate-spin" />
-            ) : (
-              <span>Sign Up</span>
-            )}
+            {isPending ? <InlineSpinner /> : <span>Sign Up</span>}
           </Button>
         </form>
       </Form>

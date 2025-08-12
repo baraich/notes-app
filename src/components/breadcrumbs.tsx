@@ -1,4 +1,5 @@
 import { usePathname } from "next/navigation";
+import { Fragment } from "react";
 import Link from "next/link";
 import {
   Breadcrumb,
@@ -22,8 +23,8 @@ const Breadcrumbs = ({ lastKeyDisplayName }: Props) => {
       const href = "/" + routes.slice(0, index + 1).join("/");
 
       return (
-        <>
-          <BreadcrumbItem key={href}>
+        <Fragment key={href}>
+          <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <span className="text-muted-foreground capitalize">
                 {isLast && lastKeyDisplayName
@@ -33,7 +34,7 @@ const Breadcrumbs = ({ lastKeyDisplayName }: Props) => {
             </BreadcrumbLink>
           </BreadcrumbItem>
           {!isLast && <BreadcrumbSeparator />}
-        </>
+        </Fragment>
       );
     });
   };
