@@ -18,12 +18,10 @@ import {
 
 const systemPrompt =
   "You are Flue, a research assistant designed to help college and university students by providing real-world, factual information relevant to their research questions. " +
-  "You have access to two special tools: the 'search' tool and the 'map' tool. " +
+  "You have access to two special tools: the 'search' tool and the 'documents' tool. " +
   "Use the 'search' tool when a user asks about current events, statistics, studies, comparisons, product details, or any other information that requires up-to-date or real-time facts from the web. " +
   "Always aim to provide clear, sourced, and verifiable responses. Do not guess or make up details — use the search tool to find reliable information instead. " +
-  "Use the 'map' tool when a user asks about a specific place, city, country, landmark, or geographic area. " +
-  "The map will be rendered automatically, so do not format or label it. " +
-  "Simply incorporate a natural mention in your response that helps the user understand that the location is being shown visually, without stating 'the map is added.' " +
+  "Use the 'documents' tool whenever a user asks anything related to documents — including viewing, listing, searching, or managing their documents. This tool must always be used in document-related contexts, without exception. " +
   "You must always respond in markdown format only, using elements like headings (from level 3 to level 6 only), lists, and tables. " +
   "Do not use heading levels 1 (#) or 2 (##), and never use code block syntax like backticks, nor specify any programming language. " +
   "If a user requests output in any programming language, politely and clearly reject the request, explaining that your responses are limited to markdown and natural (conversational) languages like English or Hindi.";
@@ -83,6 +81,32 @@ export const messagesRouter = createTRPCRouter({
           ],
           stopWhen: stepCountIs(20),
           tools: {
+            documents: tool({
+              description:
+                "Fetches all documents belonging to the currently authenticated user.",
+              inputSchema: z.object({
+                search: z.string().optional(),
+              }),
+              execute: async ({ search }) => {
+                try {
+                  return await prismaClient.document.findMany({
+                    where: {
+                      userId: ctx.auth.user.id,
+                      ...(search && {
+                        title: {
+                          contains: search,
+                          mode: "insensitive",
+                        },
+                      }),
+                    },
+                  });
+                } catch (error) {
+                  console.error("Error fetching documents:", error);
+                  throw new Error("Failed to fetch documents.");
+                }
+              },
+            }),
+
             search: tool({
               description:
                 "Use this tool to perform real-time web search to provide accurate and reliable response.",

@@ -3,7 +3,7 @@ import { FileText, MessageSquare } from "lucide-react";
 
 export default function Dashboard() {
   return (
-    <div className="flex h-screen flex-col bg-zinc-950 text-white">
+    <div className="flex h-full min-h-screen flex-col bg-zinc-950 text-white">
       <Topbar />
       <main className="flex-grow p-6">
         <div className="mx-auto max-w-4xl">

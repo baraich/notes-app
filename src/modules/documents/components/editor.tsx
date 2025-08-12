@@ -17,9 +17,7 @@ interface EditorProps {
 
 export default function Editor({ initialContent, documentId }: EditorProps) {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
   const [editorContent, setEditorContent] = useState<string>(initialContent);
-  const [saveStatus, setSaveStatus] = useState<string>("Saved");
   const isFirstRender = useRef(true);
 
   const saveMutation = useMutation(
@@ -49,9 +47,7 @@ export default function Editor({ initialContent, documentId }: EditorProps) {
       return;
     }
     const saveContent = async (content: string) => {
-      setSaveStatus("Saving...");
       await saveMutation.mutateAsync({ content, id: documentId });
-      setSaveStatus("Saved");
     };
 
     if (debouncedEditorContent) {
@@ -88,10 +84,7 @@ export default function Editor({ initialContent, documentId }: EditorProps) {
   });
 
   return (
-    <div className="relative max-h-screen min-h-screen bg-zinc-900 px-4 py-3 text-white">
-      <div className="pointer-events-none absolute top-1 right-0 mb-4 text-right text-xs text-zinc-400">
-        {saveStatus}
-      </div>
+    <div className="h-full min-h-screen px-4 py-3 text-white">
       <EditorContent
         translate="no"
         editor={editor}

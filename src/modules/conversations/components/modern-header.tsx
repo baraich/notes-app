@@ -5,11 +5,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronLeft, MoreVertical } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RenameConversationDialog from "./rename-conversation-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 interface Props {
   name?: string;
@@ -34,25 +35,8 @@ export default function ModernHeader({
       />
       <div className="sticky top-0 z-10 border-b border-zinc-700 bg-zinc-800/80 px-2 py-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div>
-              <Button
-                onClick={() => router.push("/")}
-                variant={"ghost"}
-                size={"icon"}
-              >
-                <ChevronLeft />
-              </Button>
-            </div>
-            <div className="flex flex-col items-start justify-center">
-              <h1 className="font-semibold text-gray-100">
-                {name || "Untitled Conversation"}
-              </h1>
-              <p className="text-xs text-gray-500">
-                Created at{" "}
-                {createdAt ? new Date(createdAt).toLocaleDateString() : "..."}
-              </p>
-            </div>
+          <div className="px-3">
+            <Breadcrumbs lastKeyDisplayName={name} />
           </div>
           <div className="flex items-center gap-2">
             <DropdownMenu>

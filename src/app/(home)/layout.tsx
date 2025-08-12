@@ -8,7 +8,7 @@ interface Props {
 export default function MainLayout({ children }: Props) {
   return (
     <SidebarProvider>
-      <main className="flex h-screen w-full bg-black">
+      <main className="flex h-full min-h-screen w-full">
         <AppSidebar />
         <div className="relative flex h-full flex-1 flex-col">
           <div className="flex-1">{children}</div>

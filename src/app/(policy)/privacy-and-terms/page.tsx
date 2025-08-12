@@ -2,7 +2,7 @@ import React from "react";
 
 const PrivacyAndTermsPage = () => {
   return (
-    <div className="min-h-screen bg-zinc-950 font-sans leading-relaxed text-white">
+    <div className="h-full min-h-screen bg-zinc-950 font-sans leading-relaxed text-white">
       <div className="mx-auto max-w-4xl px-6 py-12">
         <div
           className="mb-8 border-l-4 border-red-500 bg-red-900 p-4 text-red-200"

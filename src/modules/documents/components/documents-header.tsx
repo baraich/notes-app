@@ -10,18 +10,14 @@ import { Button } from "@/components/ui/button";
 import RenameDocumentDialog from "./rename-document-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Breadcrumbs from "@/components/breadcrumbs";
 
 interface Props {
   name?: string;
   documentId: string;
-  createdAt?: string | Date;
 }
 
-export default function DocumentsHeader({
-  name,
-  createdAt,
-  documentId,
-}: Props) {
+export default function DocumentsHeader({ name, documentId }: Props) {
   const router = useRouter();
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
 
@@ -34,25 +30,8 @@ export default function DocumentsHeader({
       />
       <div className="sticky top-0 z-10 border-b border-zinc-700 bg-zinc-800/80 px-2 py-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div>
-              <Button
-                onClick={() => router.push("/")}
-                variant={"ghost"}
-                size={"icon"}
-              >
-                <ChevronLeft />
-              </Button>
-            </div>
-            <div className="flex flex-col items-start justify-center">
-              <h1 className="font-semibold text-gray-100">
-                {name || "Untitled Document"}
-              </h1>
-              <p className="text-xs text-gray-500">
-                Created at{" "}
-                {createdAt ? new Date(createdAt).toLocaleDateString() : "..."}
-              </p>
-            </div>
+          <div className="px-3">
+            <Breadcrumbs lastKeyDisplayName={name} />
           </div>
           <div className="flex items-center gap-2">
             <DropdownMenu>

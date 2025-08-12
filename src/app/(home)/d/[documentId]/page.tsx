@@ -36,13 +36,12 @@ export default function DocumentPage({ params }: Props) {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-zinc-950">
+    <div className="relative flex h-full min-h-screen flex-col bg-zinc-900">
       <DocumentsHeader
         documentId={documentId}
-        createdAt={document.createdAt}
         name={document.name || undefined}
       />
-      <div className="flex-1 bg-zinc-900 px-4 pt-6">
+      <div className="mx-auto w-full max-w-3xl flex-1 sm:px-4 sm:pt-6">
         <Editor
           documentId={document.id}
           initialContent={document.content || ""}
