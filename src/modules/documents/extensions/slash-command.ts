@@ -45,10 +45,6 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
             editor.chain().focus().toggleBulletList().run(),
           toggleOrderedList: () =>
             editor.chain().focus().toggleOrderedList().run(),
-          toggleHighlight: () => editor.chain().focus().toggleHighlight().run(),
-          toggleBold: () => editor.chain().focus().toggleBold().run(),
-          toggleItalic: () => editor.chain().focus().toggleItalic().run(),
-          toggleStrike: () => editor.chain().focus().toggleStrike().run(),
           setCodeBlockTS: () =>
             editor.chain().focus().setCodeBlock({ language: "ts" }).run(),
         });
@@ -87,6 +83,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
             applyCommand = props.command;
 
             popup = tippy("body", {
+              // eslint-disable-next-line
               getReferenceClientRect: props.clientRect as any,
               appendTo: () => document.body,
               content: component.element,
@@ -114,6 +111,7 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
             });
             if (!props.clientRect) return;
             popup[0]?.setProps({
+              // eslint-disable-next-line
               getReferenceClientRect: props.clientRect as any,
             });
           },

@@ -17,6 +17,7 @@ import {
   Strikethrough,
   Code2,
 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export type SlashItem = {
   title: string;
@@ -34,36 +35,44 @@ interface SlashMenuProps {
 }
 
 export function SlashMenu({ items, selectedIndex, onSelect }: SlashMenuProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const computedItems = useMemo(() => items, [items]);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    // Ensure baseline styles for positioning container externally
-    container.style.maxHeight = "320px";
-    container.style.overflowY = "auto";
-  }, []);
+    const item = itemRefs.current[selectedIndex];
+    if (item) {
+      item.scrollIntoView({
+        block: "center",
+        behavior: "smooth",
+      });
+    }
+  }, [selectedIndex]);
 
   if (!computedItems.length) {
     return (
-      <div ref={containerRef} className="rounded-md border border-zinc-800 bg-zinc-900/95 p-3 text-sm text-zinc-400">
+      <div className="max-h-[320px] w-80 rounded-md border border-zinc-800 bg-zinc-900/95 p-3 text-sm text-zinc-400">
         No results
       </div>
     );
   }
 
   return (
-    <div ref={containerRef} className="w-80 rounded-md border border-zinc-800 bg-zinc-900/95 p-1 shadow-xl">
+    <ScrollArea className="max-h-[320px] w-80 overflow-hidden border border-zinc-800 bg-zinc-900 p-1 shadow-xl">
       {computedItems.map((item, index) => (
         <button
           key={index}
+          ref={(el) => {
+            itemRefs.current[index] = el;
+          }}
           type="button"
-          onMouseDown={(e) => e.preventDefault()}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           onClick={() => onSelect(index)}
           className={cn(
-            "flex w-full items-center gap-3 rounded px-2 py-2 text-left hover:bg-zinc-800",
+            "flex w-full items-center gap-3 px-2 py-2 text-left hover:bg-zinc-800",
             index === selectedIndex && "bg-zinc-800",
           )}
         >
@@ -77,26 +86,21 @@ export function SlashMenu({ items, selectedIndex, onSelect }: SlashMenuProps) {
             ) : null}
           </div>
           {item.shortcut ? (
-            <span className="ml-auto text-[10px] uppercase tracking-wide text-zinc-500">
+            <span className="ml-auto text-[10px] tracking-wide text-zinc-500 uppercase">
               {item.shortcut}
             </span>
           ) : null}
         </button>
       ))}
-    </div>
+    </ScrollArea>
   );
 }
 
-// Factory to provide a default Notion-like items list
 export function buildDefaultSlashItems(actions: {
   setHeading: (level: 1 | 2 | 3 | 4) => void;
   toggleBlockquote: () => void;
   toggleBulletList: () => void;
   toggleOrderedList: () => void;
-  toggleHighlight: () => void;
-  toggleBold: () => void;
-  toggleItalic: () => void;
-  toggleStrike: () => void;
   setCodeBlockTS: () => void;
 }): SlashItem[] {
   return [
@@ -155,34 +159,6 @@ export function buildDefaultSlashItems(actions: {
       alias: ["code", "ts", "typescript"],
       icon: <Code2 className="h-4 w-4" />,
       action: actions.setCodeBlockTS,
-    },
-    {
-      title: "Bold",
-      description: "Make text bold",
-      alias: ["strong", "b"],
-      icon: <Bold className="h-4 w-4" />,
-      action: actions.toggleBold,
-    },
-    {
-      title: "Italic",
-      description: "Make text italic",
-      alias: ["emphasis", "i"],
-      icon: <Italic className="h-4 w-4" />,
-      action: actions.toggleItalic,
-    },
-    {
-      title: "Strikethrough",
-      description: "Strike out text",
-      alias: ["strike", "s"],
-      icon: <Strikethrough className="h-4 w-4" />,
-      action: actions.toggleStrike,
-    },
-    {
-      title: "Highlight",
-      description: "Highlight text",
-      alias: ["hl", "mark"],
-      icon: <Highlighter className="h-4 w-4" />,
-      action: actions.toggleHighlight,
     },
   ];
 }

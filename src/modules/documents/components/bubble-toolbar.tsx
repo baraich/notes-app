@@ -54,9 +54,7 @@ function BubbleButton({
 }
 
 export function BubbleToolbar({ editor, attachRef }: BubbleToolbarProps) {
-  if (!editor) return null;
   const Divider = () => <div className="mx-1 h-4 w-px bg-zinc-700" />;
-
   const [, forceRender] = useState(0);
   useEffect(() => {
     if (!editor) return;
@@ -76,6 +74,7 @@ export function BubbleToolbar({ editor, attachRef }: BubbleToolbarProps) {
     };
   }, [editor]);
 
+  if (!editor) return null;
   return (
     <div
       ref={attachRef}
