@@ -3,12 +3,14 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";
+import BubbleMenuExtension from "@tiptap/extension-bubble-menu";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useTRPC } from "@/trpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { BubbleToolbar } from "./bubble-toolbar";
 
 interface EditorProps {
   initialContent: string;
@@ -19,6 +21,8 @@ export default function Editor({ initialContent, documentId }: EditorProps) {
   const trpc = useTRPC();
   const [editorContent, setEditorContent] = useState<string>(initialContent);
   const isFirstRender = useRef(true);
+  const [bubbleMenuElement, setBubbleMenuElement] =
+    useState<HTMLDivElement | null>(null);
 
   const saveMutation = useMutation(
     trpc.documents.save.mutationOptions({
@@ -55,36 +59,54 @@ export default function Editor({ initialContent, documentId }: EditorProps) {
     }
   }, [debouncedEditorContent]);
 
-  const editor = useEditor({
-    content: initialContent,
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3, 4],
+  const editor = useEditor(
+    {
+      content: initialContent,
+      extensions: [
+        StarterKit.configure({
+          heading: {
+            levels: [1, 2, 3, 4],
+          },
+        }),
+        Highlight,
+        BubbleMenuExtension.configure({
+          pluginKey: "textSelectionMenu",
+          element: bubbleMenuElement ?? undefined,
+          updateDelay: 150,
+          options: {
+            strategy: "absolute",
+            placement: "top",
+            offset: { mainAxis: 8 },
+          },
+          shouldShow: ({ editor }) => !editor.state.selection.empty,
+        }),
+        Placeholder.configure({
+          placeholder: "Write something...",
+          emptyNodeClass: cn(
+            "cursor-text before:content-[attr(data-placeholder)] before:opacity-50 before:pointer-events-none before:float-left before:h-0",
+          ),
+        }),
+      ],
+      immediatelyRender: false,
+      editorProps: {
+        attributes: {
+          class: "focus:outline-none",
         },
-      }),
-      Highlight,
-      Placeholder.configure({
-        placeholder: "Write something...",
-        emptyNodeClass: cn(
-          "cursor-text before:content-[attr(data-placeholder)] before:opacity-50 before:pointer-events-none before:float-left before:h-0",
-        ),
-      }),
-    ],
-    immediatelyRender: false,
-    editorProps: {
-      attributes: {
-        class: "focus:outline-none",
       },
+      onUpdate: ({ editor }) => {
+        setEditorContent(editor.getHTML());
+      },
+      injectCSS: false,
     },
-    onUpdate: ({ editor }) => {
-      setEditorContent(editor.getHTML());
-    },
-    injectCSS: false,
-  });
+    // Recreate editor once the bubble menu element exists
+    [bubbleMenuElement],
+  );
 
   return (
     <div className="mt-[5.5rem] h-full min-h-screen px-4 pb-3 text-white">
+      {editor && (
+        <BubbleToolbar editor={editor} attachRef={setBubbleMenuElement} />
+      )}
       <EditorContent
         translate="no"
         editor={editor}
