@@ -84,7 +84,7 @@ export default function Editor({ initialContent, documentId }: EditorProps) {
   });
 
   return (
-    <div className="h-full min-h-screen px-4 py-3 text-white">
+    <div className="mt-[5.5rem] h-full min-h-screen px-4 pb-3 text-white">
       <EditorContent
         translate="no"
         editor={editor}
