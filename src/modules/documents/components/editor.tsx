@@ -4,6 +4,9 @@ import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";
 import BubbleMenuExtension from "@tiptap/extension-bubble-menu";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { common, createLowlight } from "lowlight";
+const lowlight = createLowlight(common);
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -11,6 +14,7 @@ import { useTRPC } from "@/trpc/client";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { BubbleToolbar } from "./bubble-toolbar";
+import { SlashCommand } from "../extensions/slash-command";
 
 interface EditorProps {
   initialContent: string;
@@ -43,7 +47,7 @@ export default function Editor({ initialContent, documentId }: EditorProps) {
       },
     }),
   );
-  const debouncedEditorContent = useDebounce(editorContent.trim(), 500);
+  const debouncedEditorContent = useDebounce(editorContent.trim(), 1500);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -64,11 +68,16 @@ export default function Editor({ initialContent, documentId }: EditorProps) {
       content: initialContent,
       extensions: [
         StarterKit.configure({
+          codeBlock: false,
           heading: {
             levels: [1, 2, 3, 4],
           },
         }),
         Highlight,
+        CodeBlockLowlight.configure({
+          lowlight,
+        }),
+        SlashCommand,
         BubbleMenuExtension.configure({
           pluginKey: "textSelectionMenu",
           element: bubbleMenuElement ?? undefined,

@@ -10,6 +10,12 @@ import {
   Highlighter,
   List,
   ListOrdered,
+  Heading1,
+  Heading2,
+  Heading3,
+  Heading4,
+  Quote,
+  Code2,
 } from "lucide-react";
 
 interface BubbleToolbarProps {
@@ -100,6 +106,63 @@ export function BubbleToolbar({ editor, attachRef }: BubbleToolbarProps) {
         active={editor.isActive("strike")}
       >
         <Strikethrough className="h-4 w-4" />
+      </BubbleButton>
+
+      <Divider />
+
+      <BubbleButton
+        label="Heading 1"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+        active={editor.isActive("heading", { level: 1 })}
+      >
+        <Heading1 className="h-4 w-4" />
+      </BubbleButton>
+      <BubbleButton
+        label="Heading 2"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        active={editor.isActive("heading", { level: 2 })}
+      >
+        <Heading2 className="h-4 w-4" />
+      </BubbleButton>
+      <BubbleButton
+        label="Heading 3"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+        active={editor.isActive("heading", { level: 3 })}
+      >
+        <Heading3 className="h-4 w-4" />
+      </BubbleButton>
+      <BubbleButton
+        label="Heading 4"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+        active={editor.isActive("heading", { level: 4 })}
+      >
+        <Heading4 className="h-4 w-4" />
+      </BubbleButton>
+
+      <Divider />
+
+      <BubbleButton
+        label="Blockquote"
+        onClick={() => editor.chain().focus().toggleBlockquote().run()}
+        active={editor.isActive("blockquote")}
+      >
+        <Quote className="h-4 w-4" />
+      </BubbleButton>
+
+      <BubbleButton
+        label="TS code block"
+        onClick={() => {
+          const isActive = editor.isActive("codeBlock");
+          const chain = editor.chain().focus();
+          if (isActive) {
+            chain.toggleCodeBlock().run();
+          } else {
+            chain.setCodeBlock({ language: "ts" }).run();
+          }
+        }}
+        active={editor.isActive("codeBlock")}
+      >
+        <Code2 className="h-4 w-4" />
       </BubbleButton>
 
       <Divider />
