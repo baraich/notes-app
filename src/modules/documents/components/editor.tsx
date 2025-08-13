@@ -53,7 +53,7 @@ export default function Editor({ initialContent, documentId }: EditorProps) {
     if (debouncedEditorContent) {
       saveContent(debouncedEditorContent);
     }
-  }, [debouncedEditorContent, documentId, saveMutation]);
+  }, [debouncedEditorContent]);
 
   const editor = useEditor({
     content: initialContent,
